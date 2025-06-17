@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "zustand": "^5.0.5",
-    "chat-shared": "workspace:*",
     "randomcolor": "^0.6.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

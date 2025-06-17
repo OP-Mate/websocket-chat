@@ -2,6 +2,3 @@
 packages:
   - client
   - server
-  - shared
-onlyBuiltDependencies:
-  - esbuild

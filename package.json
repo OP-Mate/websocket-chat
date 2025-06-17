@@ -10,8 +10,7 @@
   },
   "workspaces": [
     "./client",
-    "./server",
-    "./shared"
+    "./server"
   ],
   "keywords": [],
   "author": "",

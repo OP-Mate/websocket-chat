@@ -1,6 +1,6 @@
 import { WebSocketServer, WebSocket } from "ws";
 import crypto from "node:crypto";
-import { UserSchema, UserSchemaType, BroadcastMsgSchema } from "chat-shared";
+import { UserSchema, UserSchemaType, BroadcastMsgSchema } from "./schema.js";
 
 console.log("HELLO");
 
