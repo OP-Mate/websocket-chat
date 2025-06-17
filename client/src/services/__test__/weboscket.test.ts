@@ -106,7 +106,8 @@ describe("ChatWebSocket", () => {
 
   it("should reject sendMessage if schemaPayload is invalid", async () => {
     const schemaPayload = { success: false, error: "err" };
-    await expect(chatWs.sendMessage(schemaPayload as any)).rejects.toBe("err");
+    // @ts-expect-error testing invalid payload
+    await expect(chatWs.sendMessage(schemaPayload)).rejects.toBe("err");
   });
 
   it("should reject sendMessage if send throws", async () => {

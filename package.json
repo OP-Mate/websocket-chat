@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "client:dev": "npm run dev -w client",
-    "server:dev": "npm run dev -w server"
+    "server:dev": "npm run dev -w server",
+    "client:test": "npm run test -w client",
+    "client:lint": "npm run lint -w client",
+    "server:lint": "npm run lint -w server"
   },
   "workspaces": [
     "./client",
