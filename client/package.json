@@ -1,8 +1,8 @@
 {
   "name": "chat-client",
-  "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "pnpm@10.12.1",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -11,13 +11,12 @@
     "test": "vitest --coverage"
   },
   "dependencies": {
-    "chat-shared": "*",
+    "zustand": "^5.0.5",
+    "chat-shared": "workspace:*",
     "randomcolor": "^0.6.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "ws": "^8.18.2"
-  },
-  "devDependencies": {
+    "zod": "^3.25.65",
     "@eslint/js": "^9.25.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",

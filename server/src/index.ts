@@ -2,12 +2,14 @@ import { WebSocketServer, WebSocket } from "ws";
 import crypto from "node:crypto";
 import { UserSchema, UserSchemaType, BroadcastMsgSchema } from "chat-shared";
 
+console.log("HELLO");
+
 interface IUser extends UserSchemaType {
   socket: WebSocket;
 }
 
 const PORT = 8080;
-const server = new WebSocketServer({ port: PORT });
+const server = new WebSocketServer({ port: PORT, host: "0.0.0.0" });
 
 const users = new Set<IUser>();
 

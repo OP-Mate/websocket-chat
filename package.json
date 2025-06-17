@@ -2,6 +2,7 @@
   "name": "chat",
   "version": "1.0.0",
   "main": "index.js",
+  "packageManager": "pnpm@10.12.1",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "client:dev": "npm run dev -w client",
@@ -15,9 +16,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "zod": "^3.25.51",
-    "zustand": "^5.0.5"
-  }
+  "description": ""
 }
