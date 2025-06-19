@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import * as store from "../index";
-import type { BroadcastMsgSchemaType, UserSchemaType } from "chat-shared";
+import type {
+  BroadcastMsgSchemaType,
+  UserSchemaType,
+} from "../../services/schema";
 import { act, renderHook } from "@testing-library/react";
 
 describe("WebSocketStore actions/selectors", () => {

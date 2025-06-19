@@ -6,7 +6,7 @@ import { Username } from "../index";
 import * as wsModule from "../../../services/ws";
 import * as storeModule from "../../../store";
 vi.mock("../../../store");
-import { BroadcastCreateUserSchema } from "chat-shared";
+import { BroadcastCreateUserSchema } from "../../../services/schema";
 
 vi.mock("../../../services/websocket");
 

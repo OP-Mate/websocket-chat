@@ -1,6 +1,9 @@
 import React, { useCallback } from "react";
 import { ws } from "../../services/ws";
-import { BroadcastMsgSchema, type BroadcastMsgSchemaType } from "chat-shared";
+import {
+  BroadcastMsgSchema,
+  type BroadcastMsgSchemaType,
+} from "../../services/schema";
 import { getName } from "../../store";
 
 export const Message: React.FC = () => {

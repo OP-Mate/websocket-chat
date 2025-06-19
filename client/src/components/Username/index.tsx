@@ -1,7 +1,7 @@
 import {
   BroadcastCreateUserSchema,
   type BroadcastCreateUserSchemaType,
-} from "chat-shared";
+} from "../../services/schema";
 import React, { useCallback, useRef } from "react";
 import { ws } from "../../services/ws";
 import { setName } from "../../store";

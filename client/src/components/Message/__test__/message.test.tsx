@@ -3,7 +3,7 @@ import { vi } from "vitest";
 import { Message } from "../index";
 import * as wsModule from "../../../services/ws";
 import * as storeModule from "../../../store";
-import { BroadcastMsgSchema } from "chat-shared";
+import { BroadcastMsgSchema } from "../../../services/schema";
 
 describe("<Message />", () => {
   beforeEach(() => {

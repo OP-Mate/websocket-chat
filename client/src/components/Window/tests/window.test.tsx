@@ -26,6 +26,7 @@ describe("<Window />", () => {
   ];
 
   beforeEach(() => {
+    // @ts-expect-error unit tests
     vi.spyOn(storeModule, "useMessages").mockReturnValue(mockMessages);
   });
 
