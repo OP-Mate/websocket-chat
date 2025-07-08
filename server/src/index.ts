@@ -1,15 +1,13 @@
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocketServer, WebSocket, RawData } from "ws";
 import crypto from "node:crypto";
-import { UserSchema, UserSchemaType, BroadcastMsgSchema } from "./schema.js";
-
-console.log("HELLO");
+import { UserSchema, UserSchemaType, BroadcastMsgSchema } from "chat-shared";
 
 interface IUser extends UserSchemaType {
   socket: WebSocket;
 }
 
 const PORT = 8080;
-const server = new WebSocketServer({ port: PORT, host: "0.0.0.0" });
+const server = new WebSocketServer({ port: PORT });
 
 const users = new Set<IUser>();
 
@@ -17,7 +15,7 @@ function createArrayBuffer(msg: string) {
   return Buffer.from(msg, "utf-8");
 }
 
-function broadcastMsg(rawData: WebSocket.RawData, isBinary: boolean) {
+function broadcastMsg(rawData: RawData, isBinary: boolean) {
   for (const user of users) {
     if (user.socket.readyState === WebSocket.OPEN) {
       user.socket.send(rawData, { binary: isBinary });

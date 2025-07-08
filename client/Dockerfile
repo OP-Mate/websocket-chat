@@ -1,33 +1,15 @@
-# --- Build stage ---
-FROM node:22.14.0-alpine AS builder
+FROM node:24-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-WORKDIR /app
+FROM base AS build
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run -r build
+RUN pnpm deploy --filter=chat-client --prod /prod/client
 
-# RUN rm -rf ./client/dist
-
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-COPY client/nginx.conf /etc/nginx/conf.d/default.conf
-COPY pnpm-workspace.yaml ./
-COPY package.json pnpm-lock.yaml ./
-COPY client/package.json client/pnpm.* client/
-# COPY server/package.json server/pnpm.* server/
-
-RUN pnpm install --frozen-lockfile
-
-COPY client ./client
-
-# RUN mkdir -p client/dist
-
-# Build
-RUN pnpm --filter chat-client run build
-
-# --- Serve stage ---
-FROM nginx:alpine
-RUN ls -l /usr/share/nginx/html
-COPY --from=builder /app/client/dist /usr/share/nginx/html
-COPY client/nginx.conf /etc/nginx/conf.d/default.conf
-
+FROM nginx:alpine AS client
+COPY --from=build /prod/client/dist /usr/share/nginx/html
 EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]

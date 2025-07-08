@@ -1,7 +1,4 @@
-import type {
-  BroadcastMsgSchemaType,
-  UserSchemaType,
-} from "../services/schema";
+import type { BroadcastMsgSchemaType, UserSchemaType } from "chat-shared";
 import { create } from "zustand";
 
 interface WebSocketStore {

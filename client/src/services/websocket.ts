@@ -5,7 +5,7 @@ import {
   BroadcastSchema,
   type BroadcastMsgSchemaType,
   type UserSchemaType,
-} from "../services/schema";
+} from "chat-shared";
 import type { SafeParseReturnType } from "zod";
 
 export type AddMessageFn = (msg: BroadcastMsgSchemaType) => void;

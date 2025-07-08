@@ -1,40 +1,30 @@
-# --- Build stage ---
-FROM node:22.14.0-alpine AS builder
+FROM node:24-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
+FROM base AS build
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run -r build
+
+
+FROM node:24-slim AS server
 WORKDIR /app
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
-# Copy root and workspace manifests
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY server/package.json server/
+COPY --from=build /usr/src/app/node_modules. ./node_modules
+COPY --from=build /usr/src/app/server ./server
+COPY --from=build /usr/src/app/shared ./shared
 
-# Install dependencies
-RUN corepack enable && corepack prepare pnpm@latest --activate
-RUN pnpm install --no-frozen-lockfile
 
-# Copy source code
-COPY server ./server
 
-# Build the server
-RUN pnpm --filter chat-server run build
 
-# --- Runtime stage ---
-FROM node:22.14.0-alpine AS runner
+EXPOSE 8001
+CMD [ "node", "server/dist/index.js"]
 
-WORKDIR /app
 
-# Copy built output and only what's needed for production
-COPY --from=builder /app/server/dist ./dist
-COPY --from=builder /app/server/package.json ./
-COPY --from=builder /app/pnpm-lock.yaml ./
 
-RUN ls -l /app || echo "no app in /app"
-RUN ls -l /app/server || echo "no server in /app/server"
-RUN ls -l /app/server/dist || echo "No dist in /app/server"
-RUN ls -l /app/dist || echo "No dist in /app"
-
-# Install only production dependencies
-RUN corepack enable && corepack prepare pnpm@latest --activate
-RUN pnpm install --prod --no-frozen-lockfile
-
-# Start the server
-CMD ["node", "dist/index.js"]
