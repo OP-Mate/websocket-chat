@@ -1,8 +1,7 @@
 ---
 packages:
-  - client
-  - server
-  - shared
+  - packages/*
+
 syncInjectedDepsAfterScripts:
   - build
 injectWorkspacePackages: true

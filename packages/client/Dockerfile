@@ -4,12 +4,16 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
 FROM base AS build
-COPY . /usr/src/app
 WORKDIR /usr/src/app
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run -r build
-RUN pnpm deploy --filter=chat-client --prod /prod/client
+COPY packages/shared ./packages/shared
+COPY packages/client ./packages/client
+COPY pnpm-lock.yaml ./
+COPY package.json ./
+COPY pnpm-workspace.yaml ./
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter chat-shared run build
+RUN pnpm --filter chat-client run build
 
 FROM nginx:alpine AS client
-COPY --from=build /prod/client/dist /usr/share/nginx/html
+COPY --from=build /usr/src/app/packages/client/dist /usr/share/nginx/html
 EXPOSE 80
