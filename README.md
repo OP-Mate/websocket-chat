@@ -38,21 +38,35 @@ websocket-chat/
 ### Install dependencies
 
 ```sh
-npm install
+pnpm install
 ```
 
 ### Run in development mode
 
+**Concurrently:**
+
+```sh
+pnpm run dev
+```
+
+or
+
+**shared:**
+
+```sh
+pnpm --filter chat-shared run dev
+```
+
 **Client:**
 
 ```sh
-npm run client:dev
+pnpm --filter chat-client run dev
 ```
 
 **Server:**
 
 ```sh
-npm run server:dev
+pnpm --filter chat-server run dev
 ```
 
 ---
@@ -82,3 +96,17 @@ npm run server:link
 ```
 
 ---
+
+### Docker
+
+**Build images:**
+
+```sh
+docker-compose build
+```
+
+**Run containers:**
+
+```sh
+docker-compose up
+```
