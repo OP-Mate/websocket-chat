@@ -6,7 +6,7 @@ import { Username } from "../index";
 import * as wsModule from "../../../services/ws";
 import * as storeModule from "../../../store";
 vi.mock("../../../store");
-import { BroadcastCreateUserSchema } from "chat-shared";
+import { ChatEventSchema } from "chat-shared";
 
 vi.mock("../../../services/websocket");
 
@@ -39,7 +39,7 @@ describe("<Username />", () => {
 
     const payload = { type: "join", name: "Alice", timestamp: 1234567890 };
 
-    const result = BroadcastCreateUserSchema.safeParse(payload);
+    const result = ChatEventSchema.safeParse(payload);
     expect(wsModule.ws.sendMessage).toHaveBeenCalledWith(result);
   });
 

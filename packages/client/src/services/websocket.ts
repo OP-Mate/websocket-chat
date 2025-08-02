@@ -1,14 +1,11 @@
 import {
-  BroadcastDeleteUserSchema,
-  BroadcastJoinSchema,
-  BroadcastMsgSchema,
-  BroadcastSchema,
-  type BroadcastMsgSchemaType,
+  ChatEventSchema,
+  type ChatEventSchemaType,
   type UserSchemaType,
 } from "chat-shared";
 import type { SafeParseReturnType } from "zod";
 
-export type AddMessageFn = (msg: BroadcastMsgSchemaType) => void;
+export type AddMessageFn = (msg: ChatEventSchemaType) => void;
 export type AddUserFn = (usr: UserSchemaType[]) => void;
 export type RemoveUserFn = (id: string) => void;
 
@@ -42,7 +39,9 @@ export class ChatWebSocket {
       return;
     }
 
-    const result = BroadcastSchema.safeParse(data);
+    console.log(data);
+
+    const result = ChatEventSchema.safeParse(data);
 
     if (!result.success) {
       console.error("Validation error:", result.error);
@@ -51,31 +50,22 @@ export class ChatWebSocket {
 
     switch (result.data.type) {
       case "message": {
-        const msgResult = BroadcastMsgSchema.safeParse(data);
-        if (msgResult.success) {
-          this.addMessage(msgResult.data);
-        } else {
-          console.error(msgResult.error);
+        if (result.success) {
+          this.addMessage(result.data);
         }
         break;
       }
       case "join": {
-        const joinResult = BroadcastJoinSchema.safeParse(data);
-        if (joinResult.success) {
-          this.addUser(joinResult.data.users);
-        } else {
-          console.error(joinResult.error);
+        if (result.success) {
+          console.log("JOIN", result.data);
+          this.addUser(result.data.users);
         }
         break;
       }
 
       case "delete": {
-        const result = BroadcastDeleteUserSchema.safeParse(data);
-
         if (result.success) {
           this.removeUser(result.data.id);
-        } else if (result.error) {
-          console.error(result.error);
         }
         break;
       }
@@ -85,8 +75,8 @@ export class ChatWebSocket {
     }
   }
 
-  sendMessage<T>(
-    schemaPayload: SafeParseReturnType<T, unknown>
+  sendMessage(
+    schemaPayload: SafeParseReturnType<ChatEventSchemaType, unknown>
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       if (schemaPayload.success) {

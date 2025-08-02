@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { ws } from "../../services/ws";
-import { BroadcastMsgSchema, type BroadcastMsgSchemaType } from "chat-shared";
+import { ChatEventSchema } from "chat-shared";
 import { getName } from "../../store";
 
 export const Message: React.FC = () => {
@@ -17,9 +17,9 @@ export const Message: React.FC = () => {
       message,
     };
 
-    const parsedPayload = BroadcastMsgSchema.safeParse(payload);
+    const parsedPayload = ChatEventSchema.safeParse(payload);
 
-    ws.sendMessage<BroadcastMsgSchemaType>(parsedPayload)
+    ws.sendMessage(parsedPayload)
       .then(() => {
         (e.target as HTMLFormElement).reset();
       })

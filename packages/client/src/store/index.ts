@@ -1,8 +1,8 @@
-import type { BroadcastMsgSchemaType, UserSchemaType } from "chat-shared";
+import type { MessageSchemaType, UserSchemaType } from "chat-shared";
 import { create } from "zustand";
 
 interface WebSocketStore {
-  messages: BroadcastMsgSchemaType[];
+  messages: MessageSchemaType[];
   users: UserSchemaType[];
   name: string;
 }
@@ -13,7 +13,7 @@ export const useWebSocketStore = create<WebSocketStore>(() => ({
   name: "",
 }));
 
-export const addMessage = (message: BroadcastMsgSchemaType) => {
+export const addMessage = (message: MessageSchemaType) => {
   useWebSocketStore.setState((s) => ({
     messages: [...s.messages, message],
   }));

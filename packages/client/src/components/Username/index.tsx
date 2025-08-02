@@ -1,7 +1,5 @@
-import {
-  BroadcastCreateUserSchema,
-  type BroadcastCreateUserSchemaType,
-} from "chat-shared";
+import { ChatEventSchema } from "chat-shared";
+
 import React, { useCallback, useRef } from "react";
 import { ws } from "../../services/ws";
 import { setName } from "../../store";
@@ -16,14 +14,14 @@ export const Username: React.FC = () => {
 
     const payload = {
       type: "join",
-      name: input.value,
+      users: [{ name: input.value }],
     };
 
     setName(input.value);
 
-    const result = BroadcastCreateUserSchema.safeParse(payload);
+    const result = ChatEventSchema.safeParse(payload);
     if (result.success) {
-      ws.sendMessage<BroadcastCreateUserSchemaType>(result);
+      ws.sendMessage(result);
     } else {
       console.error(result.error, result.data);
     }

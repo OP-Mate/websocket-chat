@@ -1,6 +1,5 @@
 import { WebSocketServer, WebSocket, RawData } from "ws";
-import crypto from "node:crypto";
-import { UserSchema, UserSchemaType, BroadcastMsgSchema } from "chat-shared";
+import { type UserSchemaType, ChatEventSchema } from "chat-shared";
 
 interface IUser extends UserSchemaType {
   socket: WebSocket;
@@ -24,6 +23,9 @@ function broadcastMsg(rawData: RawData, isBinary: boolean) {
 }
 
 server.on("connection", (socket) => {
+  // TODO: Refactor user it generation
+  let id = "";
+
   if (users.size >= 1) {
     const currentUsers = Array.from(users).map((user) => ({
       id: user.id,
@@ -33,36 +35,35 @@ server.on("connection", (socket) => {
       binary: false,
     });
   }
-  const id = crypto.randomUUID();
 
   socket.on("message", (rawData, isBinary) => {
     const msg = JSON.parse(rawData.toString("utf-8"));
+    const result = ChatEventSchema.safeParse(msg);
 
-    switch (msg.type) {
+    if (result.error) {
+      console.log(result.error);
+      return;
+    }
+
+    switch (result.data.type) {
       case "join": {
-        const user = { id, name: msg.name };
+        id = result.data.users[0]?.id || "";
 
-        const result = UserSchema.safeParse(user);
+        users.add({
+          id,
+          name: result.data.users[0]?.name || "",
+          socket,
+        });
+        const joinMsg = JSON.stringify(result.data);
+        broadcastMsg(createArrayBuffer(joinMsg), false);
 
-        if (result.success) {
-          users.add({ ...user, socket: socket });
-          const joinMsg = JSON.stringify({
-            type: "join",
-            users: [user],
-          });
-          broadcastMsg(createArrayBuffer(joinMsg), false);
-        }
         break;
       }
 
       case "message": {
-        const result = BroadcastMsgSchema.safeParse(msg);
-        if (result.success) {
-          broadcastMsg(rawData, isBinary);
-        }
+        broadcastMsg(rawData, isBinary);
         break;
       }
-
       default:
         break;
     }
@@ -74,7 +75,6 @@ server.on("connection", (socket) => {
       id,
     });
 
-    // Remove the user from the set by matching the socket
     for (const user of users) {
       if (user.socket === socket) {
         users.delete(user);
