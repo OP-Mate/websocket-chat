@@ -1,9 +1,9 @@
 import { createPortal } from "react-dom";
 import "./App.css";
-import { Message } from "../components/Message";
-import { Window } from "../components/Window";
-import { Users } from "../components/Users";
-import { Username } from "../components/Username";
+import { Message } from "../components/Message/Message.component";
+import { Window } from "../components/Window/Window.component";
+import { Users } from "../components/Users/Users.component";
+import { Username } from "../components/Username/Username.component";
 
 import { useName } from "../store";
 
