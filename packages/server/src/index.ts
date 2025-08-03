@@ -1,5 +1,7 @@
 import { WebSocketServer, WebSocket, RawData } from "ws";
-import { type UserSchemaType, ChatEventSchema } from "chat-shared";
+import crypto from "node:crypto";
+import { type UserSchemaType, ChatEventSchema, UserSchema } from "chat-shared";
+import { IncomingMessage } from "node:http";
 
 interface IUser extends UserSchemaType {
   socket: WebSocket;
@@ -14,26 +16,64 @@ function createArrayBuffer(msg: string) {
   return Buffer.from(msg, "utf-8");
 }
 
-function broadcastMsg(rawData: RawData, isBinary: boolean) {
+function broadcastMsg(
+  rawData: RawData,
+  isBinary: boolean,
+  omitIds: string[] = []
+) {
   for (const user of users) {
-    if (user.socket.readyState === WebSocket.OPEN) {
+    if (
+      user.socket.readyState === WebSocket.OPEN &&
+      !omitIds.includes(user.id)
+    ) {
       user.socket.send(rawData, { binary: isBinary });
     }
   }
 }
 
-server.on("connection", (socket) => {
-  // TODO: Refactor user it generation
-  let id = "";
+function createUser(req: IncomingMessage) {
+  const id = crypto.randomUUID();
 
-  if (users.size >= 1) {
+  const host = req.headers.host || "localhost";
+  const url = new URL(req.url ?? "", `http://${host}`);
+  const name = url.searchParams.get("name");
+  return {
+    id,
+    name,
+  };
+}
+
+server.on("connection", (socket, req) => {
+  const { id, name } = createUser(req);
+
+  const result = UserSchema.safeParse({ id, name });
+
+  if (result.error) {
+    socket.close(1337, "TODO: Some error about `name` being invalid");
+  } else {
+    // add user
+    users.add({
+      ...result.data,
+      socket,
+    });
+
+    // Get list of all connected users
     const currentUsers = Array.from(users).map((user) => ({
       id: user.id,
       name: user.name,
     }));
+
+    // Send back to the user
     socket.send(JSON.stringify({ type: "join", users: currentUsers }), {
       binary: false,
     });
+
+    // Send to all other users that this new user has connected
+    const joinMsg = JSON.stringify({
+      type: "join",
+      users: [result.data],
+    });
+    broadcastMsg(createArrayBuffer(joinMsg), false, [id]);
   }
 
   socket.on("message", (rawData, isBinary) => {
@@ -45,28 +85,7 @@ server.on("connection", (socket) => {
       return;
     }
 
-    switch (result.data.type) {
-      case "join": {
-        id = result.data.users[0]?.id || "";
-
-        users.add({
-          id,
-          name: result.data.users[0]?.name || "",
-          socket,
-        });
-        const joinMsg = JSON.stringify(result.data);
-        broadcastMsg(createArrayBuffer(joinMsg), false);
-
-        break;
-      }
-
-      case "message": {
-        broadcastMsg(rawData, isBinary);
-        break;
-      }
-      default:
-        break;
-    }
+    broadcastMsg(rawData, isBinary);
   });
 
   socket.on("close", () => {

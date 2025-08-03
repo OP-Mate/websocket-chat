@@ -10,7 +10,8 @@ export type AddUserFn = (usr: UserSchemaType[]) => void;
 export type RemoveUserFn = (id: string) => void;
 
 export class ChatWebSocket {
-  ws: WebSocket;
+  url: string;
+  ws: WebSocket | null;
   addMessage: AddMessageFn;
   addUser: AddUserFn;
   removeUser: RemoveUserFn;
@@ -21,14 +22,20 @@ export class ChatWebSocket {
     addUser: AddUserFn,
     removeUser: RemoveUserFn
   ) {
-    this.ws = new WebSocket(url);
-    this.ws.onmessage = this.handleMessage.bind(this);
+    this.url = url;
+    this.ws = null;
     this.sendMessage = this.sendMessage.bind(this);
     this.addMessage = addMessage;
     this.addUser = addUser;
     this.removeUser = removeUser;
   }
 
+  init(name: string) {
+    this.ws = new WebSocket(`${this.url}?name=${encodeURIComponent(name)}`);
+    this.ws.onmessage = this.handleMessage.bind(this);
+    this.ws.onopen = () =>
+      console.log("TODO: Redirect user once routing is added");
+  }
   handleMessage(event: MessageEvent) {
     let data: unknown;
     try {
@@ -39,8 +46,6 @@ export class ChatWebSocket {
       return;
     }
 
-    console.log(data);
-
     const result = ChatEventSchema.safeParse(data);
 
     if (!result.success) {
@@ -50,23 +55,16 @@ export class ChatWebSocket {
 
     switch (result.data.type) {
       case "message": {
-        if (result.success) {
-          this.addMessage(result.data);
-        }
+        this.addMessage(result.data);
         break;
       }
       case "join": {
-        if (result.success) {
-          console.log("JOIN", result.data);
-          this.addUser(result.data.users);
-        }
+        this.addUser(result.data.users);
         break;
       }
 
       case "delete": {
-        if (result.success) {
-          this.removeUser(result.data.id);
-        }
+        this.removeUser(result.data.id);
         break;
       }
 
@@ -81,8 +79,12 @@ export class ChatWebSocket {
     return new Promise((resolve, reject) => {
       if (schemaPayload.success) {
         try {
-          this.ws.send(JSON.stringify(schemaPayload.data));
-          resolve();
+          if (this.ws) {
+            this.ws.send(JSON.stringify(schemaPayload.data));
+            resolve();
+          } else {
+            reject(new Error("WebSocket is not initialized."));
+          }
         } catch (err) {
           reject(err);
         }

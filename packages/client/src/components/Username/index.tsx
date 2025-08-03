@@ -1,43 +1,23 @@
-import { ChatEventSchema } from "chat-shared";
-
-import React, { useCallback, useRef } from "react";
+import React, { useCallback } from "react";
 import { ws } from "../../services/ws";
 import { setName } from "../../store";
 
 export const Username: React.FC = () => {
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const input = inputRef.current;
-    if (!input || !input.value) return;
+    const form = new FormData(e.target as HTMLFormElement);
 
-    const payload = {
-      type: "join",
-      users: [{ name: input.value }],
-    };
+    const name = form.get("name") as string;
 
-    setName(input.value);
-
-    const result = ChatEventSchema.safeParse(payload);
-    if (result.success) {
-      ws.sendMessage(result);
-    } else {
-      console.error(result.error, result.data);
-    }
+    ws.init(name);
+    setName(name);
   }, []);
 
   return (
     <dialog id="dialog" open>
       <p>Enter your name</p>
       <form method="dialog" onSubmit={handleSubmit}>
-        <input
-          ref={inputRef}
-          type="text"
-          name="name"
-          placeholder="Name"
-          required
-        />
+        <input type="text" name="name" placeholder="Name" required />
         <button type="submit">Join</button>
       </form>
     </dialog>
