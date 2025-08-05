@@ -1,19 +1,34 @@
-import randomColor from "randomcolor";
 import React from "react";
 import { useUsers } from "../../store";
+import randomColor from "randomcolor";
 
 export const Users: React.FC = () => {
   const users = useUsers();
 
   return (
-    <aside id="users">
-      <ul>
+    <div className="flex flex-row border-2 p-3 border-line rounded-md overflow-hidden w-64">
+      <ul className="flex flex-1 flex-col">
         {users.map((user) => (
-          <li key={user.id} style={{ color: randomColor({ seed: user.name }) }}>
-            {user.name}
+          <li
+            className="flex items-center gap-3 first:border-t border-b px-3 border-line py-3 border-opacity-60"
+            key={user.id}
+          >
+            <img
+              className="w-8 h-8"
+              src={`https://avatar.iran.liara.run/public/boy?username=${user.name}`}
+              alt={`${user.name} avatar`}
+            />
+            <span
+              style={{
+                color: randomColor({ seed: user.name, luminosity: "dark" }),
+              }}
+              className="text-lg font-medium"
+            >
+              {user.name}
+            </span>
           </li>
         ))}
       </ul>
-    </aside>
+    </div>
   );
 };

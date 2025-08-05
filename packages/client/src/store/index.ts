@@ -9,7 +9,7 @@ interface WebSocketStore {
 
 export const useWebSocketStore = create<WebSocketStore>(() => ({
   messages: [],
-  users: [],
+  users: [{ id: "1", name: "Oliver" }],
   name: "",
 }));
 

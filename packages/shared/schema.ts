@@ -18,6 +18,7 @@ const MessageSchema = z.object({
   type: z.literal("message"),
   name: z.string(),
   message: z.string(),
+  timestamp: z.number().default(() => Date.now()),
 });
 
 const LeftSchema = z.object({
@@ -42,6 +43,8 @@ type ChatEventSchemaType = z.infer<typeof ChatEventSchema>;
 
 type UserSchemaType = z.infer<typeof UserSchema>;
 
+type MessageSchemaType = z.infer<typeof MessageSchema>;
+
 export { ChatEventSchema, UserSchema };
 
-export type { ChatEventSchemaType, UserSchemaType };
+export type { ChatEventSchemaType, UserSchemaType, MessageSchemaType };

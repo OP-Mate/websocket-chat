@@ -4,6 +4,7 @@ import {
   type UserSchemaType,
 } from "chat-shared";
 import type { SafeParseReturnType } from "zod";
+import { router } from "../main";
 
 export type AddMessageFn = (msg: ChatEventSchemaType) => void;
 export type AddUserFn = (usr: UserSchemaType[]) => void;
@@ -33,8 +34,7 @@ export class ChatWebSocket {
   init(name: string) {
     this.ws = new WebSocket(`${this.url}?name=${encodeURIComponent(name)}`);
     this.ws.onmessage = this.handleMessage.bind(this);
-    this.ws.onopen = () =>
-      console.log("TODO: Redirect user once routing is added");
+    this.ws.onopen = () => router.navigate({ to: "/users" });
   }
   handleMessage(event: MessageEvent) {
     let data: unknown;
