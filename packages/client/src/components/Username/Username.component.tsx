@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { ws } from "../../services/ws";
-import { router } from "../../main";
+import { router } from "../../router";
 
 export const Username: React.FC = () => {
   const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {

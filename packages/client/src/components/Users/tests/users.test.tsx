@@ -1,8 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import { vi } from "vitest";
-import { Users } from "../index";
+import { Users } from "../Users.component";
 import * as storeModule from "../../../store";
 import randomColor from "randomcolor";
+import type { UserSchemaType } from "chat-shared";
+
+const usersMock: UserSchemaType[] = [
+  {
+    id: "123",
+    username: "Alice",
+  },
+  { id: "456", username: "Bob" },
+];
 
 vi.mock("randomcolor", () => ({
   __esModule: true,
@@ -11,10 +20,7 @@ vi.mock("randomcolor", () => ({
 
 describe("<Users />", () => {
   beforeEach(() => {
-    vi.spyOn(storeModule, "useUsers").mockReturnValue([
-      { id: "1", name: "Alice" },
-      { id: "2", name: "Bob" },
-    ]);
+    vi.spyOn(storeModule, "useUsers").mockReturnValue(usersMock);
   });
 
   afterEach(() => {
@@ -33,7 +39,13 @@ describe("<Users />", () => {
     const bob = screen.getByText("Bob");
     expect(alice).toHaveStyle({ color: "#123456" });
     expect(bob).toHaveStyle({ color: "#123456" });
-    expect(randomColor).toHaveBeenCalledWith({ seed: "Alice" });
-    expect(randomColor).toHaveBeenCalledWith({ seed: "Bob" });
+    expect(randomColor).toHaveBeenCalledWith({
+      seed: "123",
+      luminosity: "dark",
+    });
+    expect(randomColor).toHaveBeenCalledWith({
+      seed: "456",
+      luminosity: "dark",
+    });
   });
 });

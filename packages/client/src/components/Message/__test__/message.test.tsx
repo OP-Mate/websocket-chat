@@ -1,9 +1,21 @@
 import { render, fireEvent, screen } from "@testing-library/react";
 import { vi } from "vitest";
-import { Message } from "../index";
+import { Message } from "../Message.component";
 import * as wsModule from "../../../services/ws";
 import * as storeModule from "../../../store";
-import { BroadcastMsgSchema } from "chat-shared";
+import {
+  ChatEventSchema,
+  type ChatEventSchemaType,
+  type UserSchemaType,
+} from "chat-shared";
+
+const usersMock: UserSchemaType[] = [
+  {
+    id: "123",
+    username: "Alice",
+  },
+  { id: "456", username: "Bob" },
+];
 
 describe("<Message />", () => {
   beforeEach(() => {
@@ -12,7 +24,7 @@ describe("<Message />", () => {
     vi.spyOn(wsModule.ws, "sendMessage").mockImplementation(() =>
       Promise.resolve()
     );
-    vi.spyOn(storeModule, "getName").mockReturnValue("Alice");
+    // vi.spyOn(storeModule, "getName").mockReturnValue("Alice");
   });
 
   afterEach(() => {
@@ -21,24 +33,23 @@ describe("<Message />", () => {
 
   it("renders the input", () => {
     render(<Message />);
-    expect(screen.getByPlaceholderText("Type message")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Type a message")).toBeInTheDocument();
   });
 
   it("calls ws.sendMessage with valid payload on submit", async () => {
     render(<Message />);
     const input = screen.getByPlaceholderText(
-      "Type message"
+      "Type a message"
     ) as HTMLInputElement;
 
     fireEvent.change(input, { target: { value: "Hello world" } });
     fireEvent.submit(input.closest("form")!);
 
-    const payload = {
-      type: "message",
-      name: "Alice",
+    const payload: ChatEventSchemaType = {
+      type: "message_input",
       message: "Hello world",
     };
-    const parsedPayload = BroadcastMsgSchema.safeParse(payload);
+    const parsedPayload = ChatEventSchema.safeParse(payload);
 
     await Promise.resolve();
 
@@ -48,7 +59,7 @@ describe("<Message />", () => {
   it("clears the input after successful send", async () => {
     render(<Message />);
     const input = screen.getByPlaceholderText(
-      "Type message"
+      "Type a message"
     ) as HTMLInputElement;
 
     fireEvent.change(input, { target: { value: "Hello world" } });

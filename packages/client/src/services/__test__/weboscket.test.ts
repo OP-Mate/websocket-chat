@@ -39,11 +39,12 @@ describe("ChatWebSocket", () => {
     addUser = vi.fn();
     removeUser = vi.fn();
     chatWs = new ChatWebSocket(
-      "ws://localhost:8080/",
+      "ws://localhost:8080",
       addMessage,
       addUser,
       removeUser
     );
+    chatWs.init("alice").then();
   });
 
   afterEach(() => {
@@ -58,9 +59,11 @@ describe("ChatWebSocket", () => {
 
   it("should call addMessage on valid message event", () => {
     const msg = {
+      id: 1,
+      message: "Hello",
       type: "message",
-      name: "u",
-      message: "hi",
+      created_at: 1,
+      sender_id: uuid,
     };
     const event = { data: JSON.stringify(msg) };
     chatWs.handleMessage(event as MessageEvent);
@@ -68,10 +71,10 @@ describe("ChatWebSocket", () => {
   });
 
   it("should call addUser on valid join event", () => {
-    const join = { type: "join", users: [{ id: uuid, name: "A" }] };
+    const join = { type: "new_user", user: { id: uuid, username: "A" } };
     const event = { data: JSON.stringify(join) };
     chatWs.handleMessage(event as MessageEvent);
-    expect(addUser).toHaveBeenCalledWith(join.users);
+    expect(addUser).toHaveBeenCalledWith([join.user]);
   });
 
   it("should call removeUser on valid delete event", () => {

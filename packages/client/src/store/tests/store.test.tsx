@@ -1,22 +1,24 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import * as store from "../index";
-import type { BroadcastMsgSchemaType, UserSchemaType } from "chat-shared";
+import type { ChatEventSchemaType, UserSchemaType } from "chat-shared";
 import { act, renderHook } from "@testing-library/react";
 
 describe("WebSocketStore actions/selectors", () => {
-  const user1: UserSchemaType = { id: "1", name: "Alice" };
-  const user2: UserSchemaType = { id: "2", name: "Bob" };
-  const msg1: BroadcastMsgSchemaType = {
+  const user1: UserSchemaType = { id: "1", username: "Alice" };
+  const user2: UserSchemaType = { id: "2", username: "Bob" };
+  const msg1: ChatEventSchemaType = {
+    id: 1,
     type: "message",
-    name: "Alice",
     message: "Hello",
-    timestamp: 1,
+    sender_id: "123",
+    created_at: 1,
   };
-  const msg2: BroadcastMsgSchemaType = {
+  const msg2: ChatEventSchemaType = {
+    id: 2,
     type: "message",
-    name: "Bob",
     message: "Hi",
-    timestamp: 2,
+    sender_id: "456",
+    created_at: 2,
   };
 
   beforeEach(() => {
@@ -45,16 +47,6 @@ describe("WebSocketStore actions/selectors", () => {
     expect(result.current).toEqual([user1, user2]);
   });
 
-  it("setName sets the name", () => {
-    const { result } = renderHook(store.useName);
-
-    act(() => {
-      store.setName("Charlie");
-    });
-    expect(result.current).toBe("Charlie");
-    expect(result.current).toBe("Charlie");
-  });
-
   it("deleteUser removes a user by id", () => {
     const { result } = renderHook(store.useUsers);
 
@@ -73,10 +65,5 @@ describe("WebSocketStore actions/selectors", () => {
       store.addMessage(msg2);
     });
     expect(result.current).toEqual([msg1, msg2]);
-  });
-
-  it("getName returns the current name", () => {
-    store.setName("Zoe");
-    expect(store.getName()).toBe("Zoe");
   });
 });

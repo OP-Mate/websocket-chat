@@ -1,8 +1,37 @@
 import { render, screen } from "@testing-library/react";
 import { vi } from "vitest";
-import { Window } from "../index";
+import { Window } from "../Window.component";
 import * as storeModule from "../../../store";
 import randomColor from "randomcolor";
+import "@testing-library/jest-dom";
+import type { MessageSchemaType, UserSchemaType } from "chat-shared";
+
+const mockMessages: MessageSchemaType[] = [
+  {
+    id: 1,
+    type: "message",
+    message: "Hello!",
+    created_at: 1710000000000,
+    sender_id: "123",
+  },
+  {
+    id: 2,
+    type: "message",
+    message: "Hi Alice!",
+    created_at: 1710000001001,
+    sender_id: "456",
+  },
+];
+
+const usersMock: UserSchemaType[] = [
+  {
+    id: "123",
+    username: "Alice",
+  },
+  { id: "456", username: "Bob" },
+];
+
+const mockUserId = "123";
 
 vi.mock("randomcolor", () => ({
   __esModule: true,
@@ -10,24 +39,10 @@ vi.mock("randomcolor", () => ({
 }));
 
 describe("<Window />", () => {
-  const mockMessages = [
-    {
-      type: "message",
-      name: "Alice",
-      message: "Hello!",
-      timestamp: 1710000000000,
-    },
-    {
-      type: "message",
-      name: "Bob",
-      message: "Hi Alice!",
-      timestamp: 1710000001000,
-    },
-  ];
-
   beforeEach(() => {
-    // @ts-expect-error unit tests
     vi.spyOn(storeModule, "useMessages").mockReturnValue(mockMessages);
+    vi.spyOn(storeModule, "useUsers").mockReturnValue(usersMock);
+    vi.spyOn(storeModule, "useUserId").mockReturnValue(mockUserId);
   });
 
   afterEach(() => {
@@ -48,8 +63,14 @@ describe("<Window />", () => {
     const bob = screen.getByText(/Bob @/);
     expect(alice).toHaveStyle({ color: "#abcdef" });
     expect(bob).toHaveStyle({ color: "#abcdef" });
-    expect(randomColor).toHaveBeenCalledWith({ seed: "Alice" });
-    expect(randomColor).toHaveBeenCalledWith({ seed: "Bob" });
+    expect(randomColor).toHaveBeenCalledWith({
+      seed: "123",
+      luminosity: "dark",
+    });
+    expect(randomColor).toHaveBeenCalledWith({
+      luminosity: "dark",
+      seed: "456",
+    });
   });
 
   it("shows the correct formatted time", () => {
