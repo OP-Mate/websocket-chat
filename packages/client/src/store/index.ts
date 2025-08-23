@@ -5,11 +5,13 @@ interface WebSocketStore {
   messages: MessageSchemaType[];
   users: UserSchemaType[];
   name: string;
+  userId: string;
 }
 
 export const useWebSocketStore = create<WebSocketStore>(() => ({
   messages: [],
-  users: [{ id: "1", name: "Oliver" }],
+  userId: "",
+  users: [],
   name: "",
 }));
 
@@ -25,9 +27,9 @@ export const addUser = (user: UserSchemaType[]) => {
   }));
 };
 
-export const setName = (name: string) => {
+export const setUserId = (userId: string) => {
   useWebSocketStore.setState({
-    name,
+    userId,
   });
 };
 
@@ -39,6 +41,4 @@ export const deleteUser = (id: string) => {
 
 export const useMessages = () => useWebSocketStore((s) => s.messages);
 export const useUsers = () => useWebSocketStore((s) => s.users);
-export const useName = () => useWebSocketStore((s) => s.name);
-
-export const getName = () => useWebSocketStore.getState().name;
+export const useUserId = () => useWebSocketStore((s) => s.userId);

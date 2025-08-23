@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useName } from "../store";
+import { useUserId } from "../store";
 import { router } from "../main";
 
 export const Route = createFileRoute("/")({
@@ -8,13 +8,13 @@ export const Route = createFileRoute("/")({
 });
 
 function RouteComponent() {
-  const name = useName();
+  const userId = useUserId();
 
   useEffect(() => {
-    if (!name) {
+    if (!userId) {
       router.navigate({ to: "/login" });
     }
-  }, [name]);
+  }, [userId]);
 
   return <div>Landing page</div>;
 }

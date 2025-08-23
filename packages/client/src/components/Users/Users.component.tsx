@@ -15,16 +15,16 @@ export const Users: React.FC = () => {
           >
             <img
               className="w-8 h-8"
-              src={`https://avatar.iran.liara.run/public/boy?username=${user.name}`}
-              alt={`${user.name} avatar`}
+              src={`https://avatar.iran.liara.run/public/boy?username=${user.id}`}
+              alt={`${user.username} avatar`}
             />
             <span
               style={{
-                color: randomColor({ seed: user.name, luminosity: "dark" }),
+                color: randomColor({ seed: user.id, luminosity: "dark" }),
               }}
               className="text-lg font-medium"
             >
-              {user.name}
+              {user.username}
             </span>
           </li>
         ))}

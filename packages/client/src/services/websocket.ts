@@ -4,7 +4,7 @@ import {
   type UserSchemaType,
 } from "chat-shared";
 import type { SafeParseReturnType } from "zod";
-import { router } from "../main";
+import { setUserId } from "../store";
 
 export type AddMessageFn = (msg: ChatEventSchemaType) => void;
 export type AddUserFn = (usr: UserSchemaType[]) => void;
@@ -32,9 +32,20 @@ export class ChatWebSocket {
   }
 
   init(name: string) {
-    this.ws = new WebSocket(`${this.url}?name=${encodeURIComponent(name)}`);
+    this.ws = new WebSocket(`${this.url}?username=${encodeURIComponent(name)}`);
     this.ws.onmessage = this.handleMessage.bind(this);
-    this.ws.onopen = () => router.navigate({ to: "/users" });
+    return new Promise<void>((resolve, reject) => {
+      if (!this.ws) {
+        reject(new Error("WebSocket not initialized"));
+        return;
+      }
+      this.ws.onopen = () => {
+        resolve();
+      };
+      this.ws.onclose = (e) => {
+        reject(new Error(e.reason));
+      };
+    });
   }
   handleMessage(event: MessageEvent) {
     let data: unknown;
@@ -58,9 +69,21 @@ export class ChatWebSocket {
         this.addMessage(result.data);
         break;
       }
-      case "join": {
-        this.addUser(result.data.users);
+      case "new_user": {
+        this.addUser([result.data.user]);
         break;
+      }
+
+      case "all_users": {
+        this.addUser(result.data.users);
+        setUserId(result.data.userId);
+
+        break;
+      }
+
+      case "join_failed": {
+        console.log("joined failed", result.data.error);
+        return;
       }
 
       case "delete": {

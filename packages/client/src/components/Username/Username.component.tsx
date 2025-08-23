@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { ws } from "../../services/ws";
-import { setName } from "../../store";
+import { router } from "../../main";
 
 export const Username: React.FC = () => {
   const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
@@ -9,8 +9,9 @@ export const Username: React.FC = () => {
 
     const name = form.get("name") as string;
 
-    ws.init(name);
-    setName(name);
+    ws.init(name)
+      .then(() => router.navigate({ to: "/users" }))
+      .catch((e) => console.log(e));
   }, []);
 
   return (

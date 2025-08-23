@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { ws } from "../../services/ws";
 import { ChatEventSchema } from "chat-shared";
-import { getName } from "../../store";
 
 export const Message: React.FC = () => {
   const handleSubmit = useCallback((e: React.FormEvent) => {
@@ -12,8 +11,7 @@ export const Message: React.FC = () => {
     const message = form.get("message-input") as string;
 
     const payload = {
-      type: "message",
-      name: getName(),
+      type: "message_input",
       message,
     };
 

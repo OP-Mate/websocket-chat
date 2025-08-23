@@ -1,23 +1,27 @@
 import React from "react";
 import randomColor from "randomcolor";
-import { useMessages, useName } from "../../store";
+import { useMessages, useUserId, useUsers } from "../../store";
 
 export const Window: React.FC = () => {
   const messages = useMessages();
-  const name = useName();
+  const userId = useUserId();
+  const users = useUsers();
 
   return (
     <ul className="flex flex-col gap-2 border-2 border-line rounded-md h-[90vh] p-3">
-      {messages.map((msg, i) => {
+      {messages.map((msg) => {
+        const user = users.find((user) => user.id === msg.sender_id);
+        const userName = user?.username || "";
+
         return (
-          <li key={i} className="flex flex-col gap-3">
+          <li key={msg.id} className="flex flex-col gap-3">
             <div
-              className={`flex gap-3 ${name === msg.name ? "justify-end" : ""}`}
+              className={`flex gap-3 ${userId === msg.sender_id ? "justify-end" : ""}`}
             >
-              {name !== msg.name ? (
+              {userId !== msg.sender_id ? (
                 <img
                   className="w-8 h-8"
-                  src={`https://avatar.iran.liara.run/public/boy?username=${msg.name}`}
+                  src={`https://avatar.iran.liara.run/public/boy?username=${msg.sender_id}`}
                   alt=""
                 />
               ) : null}
@@ -25,16 +29,19 @@ export const Window: React.FC = () => {
                 <span
                   className="text-xs"
                   style={{
-                    color: randomColor({ seed: msg.name, luminosity: "dark" }),
+                    color: randomColor({
+                      seed: msg.sender_id,
+                      luminosity: "dark",
+                    }),
                   }}
                 >
-                  {msg.name} @{new Date(msg.timestamp).toLocaleTimeString()}
+                  {userName} @{new Date(msg.created_at).toLocaleTimeString()}
                 </span>
 
                 <p
                   style={{
                     borderColor: randomColor({
-                      seed: msg.name,
+                      seed: msg.sender_id,
                       luminosity: "dark",
                     }),
                   }}

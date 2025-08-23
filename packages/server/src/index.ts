@@ -1,32 +1,21 @@
 import { WebSocketServer, WebSocket, RawData } from "ws";
 import crypto from "node:crypto";
-import { type UserSchemaType, ChatEventSchema, UserSchema } from "chat-shared";
+import { ChatEventSchema, UserSchema } from "chat-shared";
 import { IncomingMessage } from "node:http";
-
-interface IUser extends UserSchemaType {
-  socket: WebSocket;
-}
+import "./db";
+import { addMessageDB, addUserToDB, getAllUsersDB } from "./db";
 
 const PORT = 8080;
 const server = new WebSocketServer({ port: PORT });
-
-const users = new Set<IUser>();
 
 function createArrayBuffer(msg: string) {
   return Buffer.from(msg, "utf-8");
 }
 
-function broadcastMsg(
-  rawData: RawData,
-  isBinary: boolean,
-  omitIds: string[] = []
-) {
-  for (const user of users) {
-    if (
-      user.socket.readyState === WebSocket.OPEN &&
-      !omitIds.includes(user.id)
-    ) {
-      user.socket.send(rawData, { binary: isBinary });
+function broadcastMsg(rawData: RawData, isBinary: boolean) {
+  for (const user of server.clients) {
+    if (user.readyState === WebSocket.OPEN) {
+      user.send(rawData, { binary: isBinary });
     }
   }
 }
@@ -36,44 +25,46 @@ function createUser(req: IncomingMessage) {
 
   const host = req.headers.host || "localhost";
   const url = new URL(req.url ?? "", `http://${host}`);
-  const name = url.searchParams.get("name");
+  const username = url.searchParams.get("username");
   return {
     id,
-    name,
+    username,
   };
 }
 
 server.on("connection", (socket, req) => {
-  const { id, name } = createUser(req);
+  const { id, username } = createUser(req);
 
-  const result = UserSchema.safeParse({ id, name });
+  const result = UserSchema.safeParse({ id, username });
 
   if (result.error) {
     socket.close(1337, "TODO: Some error about `name` being invalid");
   } else {
-    // add user
-    users.add({
-      ...result.data,
-      socket,
-    });
+    const response = addUserToDB(result.data.id, result.data.username);
 
-    // Get list of all connected users
-    const currentUsers = Array.from(users).map((user) => ({
-      id: user.id,
-      name: user.name,
-    }));
+    if (!response.success) {
+      socket.close(4000, response.error);
+      return;
+    }
 
-    // Send back to the user
-    socket.send(JSON.stringify({ type: "join", users: currentUsers }), {
-      binary: false,
-    });
-
+    const currentUsers = getAllUsersDB();
+    socket.send(
+      JSON.stringify({ type: "all_users", users: currentUsers, userId: id }),
+      {
+        binary: false,
+      }
+    );
     // Send to all other users that this new user has connected
-    const joinMsg = JSON.stringify({
-      type: "join",
-      users: [result.data],
+    const newUserMsg = JSON.stringify({
+      type: "new_user",
+      user: result.data,
     });
-    broadcastMsg(createArrayBuffer(joinMsg), false, [id]);
+
+    server.clients.forEach(function each(client) {
+      if (client !== socket && client.readyState === WebSocket.OPEN) {
+        client.send(createArrayBuffer(newUserMsg), { binary: false });
+      }
+    });
   }
 
   socket.on("message", (rawData, isBinary) => {
@@ -85,7 +76,15 @@ server.on("connection", (socket, req) => {
       return;
     }
 
-    broadcastMsg(rawData, isBinary);
+    switch (result.data.type) {
+      case "message_input": {
+        const response = addMessageDB(id, result.data.message);
+        broadcastMsg(
+          createArrayBuffer(JSON.stringify({ type: "message", ...response })),
+          isBinary
+        );
+      }
+    }
   });
 
   socket.on("close", () => {
@@ -94,9 +93,10 @@ server.on("connection", (socket, req) => {
       id,
     });
 
-    for (const user of users) {
-      if (user.socket === socket) {
-        users.delete(user);
+    for (const user of server.clients) {
+      if (user === socket) {
+        // TODO: Set user to offline
+        console.log("set user to offline");
       } else {
         broadcastMsg(createArrayBuffer(msg), false);
       }

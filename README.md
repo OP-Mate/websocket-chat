@@ -110,3 +110,13 @@ docker-compose build
 ```sh
 docker-compose up
 ```
+
+### TODOs:
+
+- **Add SQLite** Replace im memory storage (Set / Map) with SQLite to persist data users, messages, rooms.
+
+- **Add online flag** Only show users who are online. User can login with same username if already registered (no auth atm)
+
+- **Add public rooms** Users should be able to create public rooms.
+
+- **Add private room** Users should be able to create private rooms.
