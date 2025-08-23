@@ -2,20 +2,7 @@ import { render, fireEvent, screen } from "@testing-library/react";
 import { vi } from "vitest";
 import { Message } from "../Message.component";
 import * as wsModule from "../../../services/ws";
-import * as storeModule from "../../../store";
-import {
-  ChatEventSchema,
-  type ChatEventSchemaType,
-  type UserSchemaType,
-} from "chat-shared";
-
-const usersMock: UserSchemaType[] = [
-  {
-    id: "123",
-    username: "Alice",
-  },
-  { id: "456", username: "Bob" },
-];
+import { ChatEventSchema, type ChatEventSchemaType } from "chat-shared";
 
 describe("<Message />", () => {
   beforeEach(() => {
@@ -24,7 +11,6 @@ describe("<Message />", () => {
     vi.spyOn(wsModule.ws, "sendMessage").mockImplementation(() =>
       Promise.resolve()
     );
-    // vi.spyOn(storeModule, "getName").mockReturnValue("Alice");
   });
 
   afterEach(() => {

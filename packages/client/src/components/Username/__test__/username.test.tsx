@@ -1,19 +1,16 @@
-import { render, fireEvent, screen, act } from "@testing-library/react";
+import { render, fireEvent, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import "@testing-library/dom";
 import "@testing-library/jest-dom";
 import { Username } from "../Username.component";
 import * as wsModule from "../../../services/ws";
-// import * as storeModule from "../../../store";
 vi.mock("../../../store");
-import { ChatEventSchema } from "chat-shared";
 
 vi.mock("../../../services/websocket");
 
 describe("<Username />", () => {
   beforeEach(() => {
     vi.spyOn(Date, "now").mockReturnValue(1234567890);
-    // vi.spyOn(storeModule, "setName").mockImplementation(() => {});
     vi.spyOn(wsModule.ws, "sendMessage").mockImplementation(async () => {});
     vi.spyOn(wsModule.ws, "init").mockImplementation(async () => {});
   });
@@ -28,7 +25,7 @@ describe("<Username />", () => {
     expect(screen.getByText("Join")).toBeInTheDocument();
   });
 
-  it("calls ws.init on valid submit", async () => {
+  it("calls ws.init on valid submit", () => {
     render(<Username />);
     const input = screen.getByPlaceholderText("Name") as HTMLInputElement;
     const button = screen.getByText("Join");

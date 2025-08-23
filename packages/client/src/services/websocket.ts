@@ -1,12 +1,13 @@
 import {
   ChatEventSchema,
   type ChatEventSchemaType,
+  type MessageSchemaType,
   type UserSchemaType,
 } from "chat-shared";
 import type { SafeParseReturnType } from "zod";
 import { setUserId } from "../store";
 
-export type AddMessageFn = (msg: ChatEventSchemaType) => void;
+export type AddMessageFn = (msg: MessageSchemaType) => void;
 export type AddUserFn = (usr: UserSchemaType[]) => void;
 export type RemoveUserFn = (id: string) => void;
 
