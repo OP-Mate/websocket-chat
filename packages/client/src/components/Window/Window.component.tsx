@@ -35,7 +35,17 @@ export const Window: React.FC = () => {
                     }),
                   }}
                 >
-                  {userName} @{new Date(msg.created_at).toLocaleTimeString()}
+                  {userName} @
+                  {new Date(Number(msg.created_at) * 1000).toLocaleString(
+                    "en-GB",
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }
+                  )}
                 </span>
 
                 <p
