@@ -13,6 +13,15 @@ export default defineConfig({
     }),
     react(),
   ],
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
   test: {
     environment: "jsdom",
     setupFiles: ["./setupTests.ts"],

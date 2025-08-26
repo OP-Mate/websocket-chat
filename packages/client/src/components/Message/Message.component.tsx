@@ -2,27 +2,39 @@ import React, { useCallback } from "react";
 import { ws } from "../../services/ws";
 import { ChatEventSchema } from "chat-shared";
 
-export const Message: React.FC = () => {
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
+interface IMessageProps {
+  roomId: number;
+}
 
-    const form = new FormData(e.target as HTMLFormElement);
+export const Message: React.FC<IMessageProps> = ({ roomId }) => {
+  console.log("roomId", roomId);
 
-    const message = form.get("message-input") as string;
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
 
-    const payload = {
-      type: "message_input",
-      message,
-    };
+      const form = new FormData(e.target as HTMLFormElement);
 
-    const parsedPayload = ChatEventSchema.safeParse(payload);
+      const message = form.get("message-input") as string;
 
-    ws.sendMessage(parsedPayload)
-      .then(() => {
-        (e.target as HTMLFormElement).reset();
-      })
-      .catch((e) => console.error("error from the promise", e));
-  }, []);
+      const payload = {
+        type: "message_input",
+        message,
+        roomId,
+      };
+
+      console.log(payload);
+
+      const parsedPayload = ChatEventSchema.safeParse(payload);
+
+      ws.sendMessage(parsedPayload)
+        .then(() => {
+          (e.target as HTMLFormElement).reset();
+        })
+        .catch((e) => console.error("error from the promise", e));
+    },
+    [roomId]
+  );
 
   return (
     <form

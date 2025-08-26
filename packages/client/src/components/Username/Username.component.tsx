@@ -1,19 +1,10 @@
-import React, { useCallback } from "react";
-import { ws } from "../../services/ws";
-import { router } from "../../router";
+import React from "react";
 
-export const Username: React.FC = () => {
-  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = new FormData(e.target as HTMLFormElement);
+interface IUsernameProps {
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+}
 
-    const name = form.get("name") as string;
-
-    ws.init(name)
-      .then(() => router.navigate({ to: "/users" }))
-      .catch((e) => console.log(e));
-  }, []);
-
+export const Username: React.FC<IUsernameProps> = ({ handleSubmit }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg p-8 flex flex-col items-center">

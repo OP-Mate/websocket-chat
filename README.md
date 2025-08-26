@@ -113,7 +113,7 @@ docker-compose up
 
 ### TODOs:
 
-- **Add SQLite** Replace im memory storage (Set / Map) with SQLite to persist data users, messages, rooms.
+- **Add SQLite DONE** Replace im memory storage (Set / Map) with SQLite to persist data users, messages, rooms.
 
 - **Add online flag** Only show users who are online. User can login with same username if already registered (no auth atm)
 

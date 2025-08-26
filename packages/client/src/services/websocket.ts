@@ -67,7 +67,7 @@ export class ChatWebSocket {
 
     switch (result.data.type) {
       case "message": {
-        this.addMessage(result.data);
+        this.addMessage([result.data]);
         break;
       }
       case "new_user": {

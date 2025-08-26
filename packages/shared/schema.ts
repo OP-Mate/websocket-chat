@@ -23,6 +23,7 @@ const NewUserSchema = z.object({
 const MessageInputSchema = z.object({
   type: z.literal("message_input"),
   message: z.string(),
+  roomId: z.number(),
 });
 
 const MessageSchema = z.object({
@@ -41,6 +42,11 @@ const JoinFailedSchema = z.object({
 const DeleteSchema = z.object({
   type: z.literal("delete"),
   id: z.string().uuid(),
+});
+
+const RoomSchema = z.object({
+  id: z.number(),
+  name: z.string(),
 });
 
 // Create the discriminated union
@@ -62,6 +68,8 @@ type MessageInputSchemaType = z.infer<typeof MessageInputSchema>;
 
 type NewUserSchemaType = z.infer<typeof NewUserSchema>;
 
+type RoomSchemaType = z.infer<typeof RoomSchema>;
+
 export { ChatEventSchema, UserSchema, NewUserSchema, MessageInputSchema };
 
 export type {
@@ -70,4 +78,5 @@ export type {
   MessageSchemaType,
   NewUserSchemaType,
   MessageInputSchemaType,
+  RoomSchemaType,
 };

@@ -6,6 +6,7 @@ interface WebSocketStore {
   users: UserSchemaType[];
   name: string;
   userId: string;
+  rooms: any;
 }
 
 export const useWebSocketStore = create<WebSocketStore>(() => ({
@@ -13,11 +14,24 @@ export const useWebSocketStore = create<WebSocketStore>(() => ({
   userId: "",
   users: [],
   name: "",
+  rooms: [],
 }));
 
-export const addMessage = (message: MessageSchemaType) => {
+export const addMessage = (message: MessageSchemaType[]) => {
   useWebSocketStore.setState((s) => ({
-    messages: [...s.messages, message],
+    messages: [...s.messages, ...message],
+  }));
+};
+
+export const addRooms = (rooms: []) => {
+  useWebSocketStore.setState((s) => ({
+    rooms: [...s.rooms, ...rooms],
+  }));
+};
+
+export const resetMessages = () => {
+  useWebSocketStore.setState(() => ({
+    messages: [],
   }));
 };
 

@@ -18,12 +18,12 @@ describe("<Message />", () => {
   });
 
   it("renders the input", () => {
-    render(<Message />);
+    render(<Message roomId={0} />);
     expect(screen.getByPlaceholderText("Type a message")).toBeInTheDocument();
   });
 
   it("calls ws.sendMessage with valid payload on submit", async () => {
-    render(<Message />);
+    render(<Message roomId={0} />);
     const input = screen.getByPlaceholderText(
       "Type a message"
     ) as HTMLInputElement;
@@ -34,6 +34,7 @@ describe("<Message />", () => {
     const payload: ChatEventSchemaType = {
       type: "message_input",
       message: "Hello world",
+      roomId: 0,
     };
     const parsedPayload = ChatEventSchema.safeParse(payload);
 
@@ -43,7 +44,7 @@ describe("<Message />", () => {
   });
 
   it("clears the input after successful send", async () => {
-    render(<Message />);
+    render(<Message roomId={0} />);
     const input = screen.getByPlaceholderText(
       "Type a message"
     ) as HTMLInputElement;

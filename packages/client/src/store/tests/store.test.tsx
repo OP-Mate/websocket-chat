@@ -33,7 +33,7 @@ describe("WebSocketStore actions/selectors", () => {
     const { result } = renderHook(store.useMessages);
 
     act(() => {
-      store.addMessage(msg1);
+      store.addMessage([msg1]);
     });
     expect(result.current).toEqual([msg1]);
   });
@@ -61,8 +61,8 @@ describe("WebSocketStore actions/selectors", () => {
     const { result } = renderHook(store.useMessages);
 
     act(() => {
-      store.addMessage(msg1);
-      store.addMessage(msg2);
+      store.addMessage([msg1]);
+      store.addMessage([msg2]);
     });
     expect(result.current).toEqual([msg1, msg2]);
   });
