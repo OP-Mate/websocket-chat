@@ -25,7 +25,7 @@ function RouteComponent() {
       <Users />
       <div className="flex flex-1 flex-col w-64 gap-3">
         <Window />
-        <Message />
+        <Message roomId={1} />
       </div>
     </div>
   );

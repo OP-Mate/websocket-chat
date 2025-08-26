@@ -11,7 +11,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest --coverage"
+    "test": "vitest --coverage",
+    "tsc": "tsc"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.130.12",
