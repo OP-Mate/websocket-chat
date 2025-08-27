@@ -171,17 +171,6 @@ app.post("/api/rooms", (req, res) => {
   broadcastRoomsUpdate();
 });
 
-app.post("/api/rooms", (req, res) => {
-  const { name } = req.body;
-  if (!name || typeof name !== "string") {
-    return res.status(400).json({ error: "Room name is required" });
-  }
-
-  const newRoom = addRoom(name);
-
-  res.status(201).json({ room: newRoom });
-});
-
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
