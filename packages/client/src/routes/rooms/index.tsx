@@ -18,7 +18,7 @@ function RouteComponent() {
   useEffect(() => {
     (async () => {
       resetMessages();
-      const r = await fetch(`/api/messages?roomId=${selectedRoomId}`);
+      const r = await fetch(`/api/messages/${selectedRoomId}`);
       const { messages } = await r.json();
 
       addMessage(messages);

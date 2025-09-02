@@ -1,6 +1,6 @@
 import express from "express";
 import { WebSocketServer, WebSocket, RawData } from "ws";
-import { ChatEventSchema, RoomSchemaType } from "chat-shared";
+import { ChatEventSchema } from "chat-shared";
 import { createServer, IncomingMessage } from "node:http";
 import "./db";
 import {
@@ -119,8 +119,10 @@ wss.on("connection", (socket, req) => {
 
 // REST
 
-app.get("/api/messages", (req, res) => {
-  const roomId = req.query.roomId as string;
+app.get("/api/messages/:roomId", (req, res) => {
+  const roomId = req.params.roomId;
+
+  console.log(roomId);
 
   const response = getMessagesByRoomIdDB(roomId);
 

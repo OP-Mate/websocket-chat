@@ -16,4 +16,6 @@ RUN pnpm --filter chat-client run build
 
 FROM nginx:alpine AS client
 COPY --from=build /usr/src/app/packages/client/dist /usr/share/nginx/html
+COPY packages/client/nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
