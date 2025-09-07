@@ -1,4 +1,4 @@
-import Database from "better-sqlite3";
+import { db } from "./index";
 import { MessageSchemaType, RoomSchemaType } from "chat-shared";
 import { randomUUID } from "crypto";
 
@@ -6,33 +6,6 @@ interface SqliteError extends Error {
   code?: string;
   errno?: number;
 }
-
-const db = new Database("chat.db");
-db.exec(`
-    CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY,
-      username TEXT UNIQUE NOT NULL,
-      created_at INTEGER DEFAULT (strftime('%s','now')),
-      is_online BOOLEAN DEFAULT TRUE
-    );
-    CREATE TABLE IF NOT EXISTS messages (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      message TEXT NOT NULL,
-      sender_id TEXT NOT NULL,
-      chat_room_id INTEGER,
-      created_at INTEGER DEFAULT (strftime('%s','now')),
-      FOREIGN KEY (sender_id) REFERENCES users(id),
-      FOREIGN KEY (chat_room_id) REFERENCES chat_rooms(id)
-    );
-    CREATE TABLE IF NOT EXISTS chat_rooms (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL UNIQUE,
-      is_private BOOLEAN DEFAULT FALSE,
-      created_at INTEGER DEFAULT (strftime('%s','now'))
-    );
-
-    INSERT OR IGNORE INTO chat_rooms (name, is_private) VALUES ('Main', False);
-`);
 
 export function addUserToDB(username: string) {
   const id = randomUUID();
@@ -90,7 +63,6 @@ export function getAllPublicRooms() {
 }
 
 export function addRoom(name: string) {
-  console.log("NAME", name);
   const stmt = db.prepare(
     "INSERT INTO chat_rooms (name, is_private) VALUES (?, ?)"
   );

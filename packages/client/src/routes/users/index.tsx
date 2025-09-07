@@ -8,7 +8,7 @@ import { useEffect } from "react";
 export const Route = createFileRoute("/users/")({
   component: RouteComponent,
   loader: async () => {
-    const r = await fetch("/api/messages?roomId=1");
+    const r = await fetch("/api/messages/1");
     const { messages } = await r.json();
 
     addMessage(messages);
