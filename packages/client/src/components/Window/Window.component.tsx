@@ -8,7 +8,7 @@ export const Window: React.FC = () => {
   const users = useUsers();
 
   return (
-    <ul className="flex flex-col gap-2 border-2 border-line rounded-md h-[90vh] p-3">
+    <ul className="flex flex-col gap-2 border-2 border-line rounded-md h-[90vh] p-3 overflow-y-scroll">
       {messages.map((msg) => {
         const user = users.find((user) => user.id === msg.sender_id);
         const userName = user?.username || "";

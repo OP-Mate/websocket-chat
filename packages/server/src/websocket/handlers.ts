@@ -1,8 +1,8 @@
 import { RawData, WebSocket } from "ws";
-import { IncomingMessage } from "node:http";
 import { wss } from "../index";
 import { ChatEventSchema } from "chat-shared";
-import { addMessageDB, addUserToDB, getAllUsersDB } from "../db/queries";
+import { addMessageDB, getAllUsersDB } from "../db/queries";
+import { AuthWebSocket } from ".";
 
 function createArrayBuffer(msg: string) {
   return Buffer.from(msg, "utf-8");
@@ -16,28 +16,15 @@ function broadcastMsg(rawData: RawData, isBinary: boolean) {
   }
 }
 
-function createUser(req: IncomingMessage) {
-  const host = req.headers.host || "localhost";
-  const url = new URL(req.url ?? "", `http://${host}`);
-  const username = url.searchParams.get("username");
-  return {
-    username: username || "",
-  };
-}
-
-export const handleCreate = (socket: WebSocket, req: IncomingMessage) => {
-  const { username } = createUser(req);
-
-  const response = addUserToDB(username);
-
-  const id = response.id;
+export const handleInitialMsg = (socket: AuthWebSocket) => {
+  const { id, username } = socket.user;
 
   const currentUsers = getAllUsersDB();
   socket.send(
     JSON.stringify({
       type: "all_users",
       users: currentUsers,
-      userId: response.id,
+      userId: id,
     }),
     {
       binary: false,
@@ -46,16 +33,15 @@ export const handleCreate = (socket: WebSocket, req: IncomingMessage) => {
   // Send to all other users that this new user has connected
   const newUserMsg = JSON.stringify({
     type: "new_user",
-    user: { id: response.id, username: response.username },
+    user: { id: id, username: username },
   });
 
+  // Send to all other users of new user
   wss.clients.forEach(function each(client) {
     if (client !== socket && client.readyState === WebSocket.OPEN) {
       client.send(createArrayBuffer(newUserMsg), { binary: false });
     }
   });
-
-  return id;
 };
 
 export const handleMessage = (
@@ -86,12 +72,15 @@ export const handleMessage = (
   }
 };
 
-export const handleClose = (socket: WebSocket, id: string) => {
+export const handleClose = (socket: AuthWebSocket) => {
+  const { id } = socket.user;
+
   const msg = JSON.stringify({
     type: "delete",
     id,
   });
 
+  // Send to all other users of user disconnect
   for (const user of wss.clients) {
     if (user === socket) {
       // TODO: Set user to offline

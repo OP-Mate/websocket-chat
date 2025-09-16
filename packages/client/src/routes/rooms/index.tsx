@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { RoomsList } from "../../components/Rooms/Rooms.component";
 import { Window } from "../../components/Window/Window.component";
-import { Username } from "../../components/Username/Username.component";
+import { AddRoom } from "../../components/Rooms/Rooms.add";
 import { useCallback, useEffect, useState } from "react";
 import { Message } from "../../components/Message/Message.component";
 import { addMessage, resetMessages } from "../../store";
@@ -42,8 +42,6 @@ function RouteComponent() {
     setShowAddRoom(false);
   }, []);
 
-  console.log("selectedRoomId", selectedRoomId);
-
   return (
     <div className="list-none flex flex-row flex-1 gap-3">
       <RoomsList
@@ -54,7 +52,7 @@ function RouteComponent() {
       <div className="flex flex-1 flex-col w-64 gap-3">
         <Window />
         <Message roomId={selectedRoomId} />
-        {showAddRoom && <Username handleSubmit={handleSubmit} />}
+        {showAddRoom && <AddRoom handleSubmit={handleSubmit} />}
       </div>
     </div>
   );

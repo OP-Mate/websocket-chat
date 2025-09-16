@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { broadcastRoomsUpdate, sseClients } from "../websocket/broadcast";
+import { broadcastRoomsUpdate } from "../websocket/broadcast";
 import { addRoom, getAllPublicRooms } from "src/db/queries";
 import { sseMiddleware } from "src/middleware/sse";
 

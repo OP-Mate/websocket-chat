@@ -1,4 +1,8 @@
-import type { MessageSchemaType, UserSchemaType } from "chat-shared";
+import type {
+  MessageSchemaType,
+  RoomSchemaType,
+  UserSchemaType,
+} from "chat-shared";
 import { create } from "zustand";
 
 interface WebSocketStore {
@@ -6,7 +10,7 @@ interface WebSocketStore {
   users: UserSchemaType[];
   name: string;
   userId: string;
-  rooms: any;
+  rooms: RoomSchemaType[];
 }
 
 export const useWebSocketStore = create<WebSocketStore>(() => ({
