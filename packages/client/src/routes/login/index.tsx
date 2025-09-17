@@ -4,16 +4,7 @@ import { Username } from "../../components/Username/Username.component";
 import { serverResponses } from "../../constants/responses";
 import { router } from "../../router";
 import { ws } from "../../services/ws";
-
-let isYes = false;
-
-const yes = async (name: string) => {
-  if (isYes) return;
-
-  await ws.init(name);
-
-  isYes = true;
-};
+import type { AuthCode } from "chat-shared";
 
 export const Route = createFileRoute("/login/")({
   component: RouteComponent,
@@ -42,11 +33,11 @@ function RouteComponent() {
 
         const json = await response.json();
 
-        setError(serverResponses[json.code]);
-
         if (json.code === "user_logged_in") {
-          yes(username);
+          await ws.init();
           router.navigate({ to: "/users" });
+        } else {
+          setError(serverResponses[json.code as AuthCode]);
         }
       } catch (e) {
         console.log(e);
@@ -86,8 +77,10 @@ function RouteComponent() {
         const json = await response.json();
 
         if (json.code === "user_created") {
-          yes(username);
+          await ws.init();
           router.navigate({ to: "/users" });
+        } else {
+          setError(serverResponses[json.code as AuthCode]);
         }
       } catch (e) {
         console.log(e);

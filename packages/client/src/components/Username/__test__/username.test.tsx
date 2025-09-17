@@ -20,15 +20,15 @@ describe("<Username />", () => {
   });
 
   it("renders input and button", () => {
-    render(<Username handleSubmit={vi.fn()} />);
+    render(<Username handleLogin={vi.fn()} handleRegister={vi.fn()} />);
     expect(screen.getByPlaceholderText("Name")).toBeInTheDocument();
-    expect(screen.getByText("Join")).toBeInTheDocument();
+    expect(screen.getAllByText("Login")[1]).toBeInTheDocument();
   });
 
   it.skip("calls ws.init on valid submit", () => {
-    render(<Username handleSubmit={vi.fn()} />);
+    render(<Username handleLogin={vi.fn()} handleRegister={vi.fn()} />);
     const input = screen.getByPlaceholderText("Name") as HTMLInputElement;
-    const button = screen.getByText("Join");
+    const button = screen.getAllByText("Login")[1];
 
     fireEvent.change(input, { target: { value: "Alice" } });
 
@@ -37,20 +37,12 @@ describe("<Username />", () => {
     expect(wsModule.ws.init).toHaveBeenCalledWith("Alice");
   });
 
-  it("does not call ws.init if input is empty", () => {
-    render(<Username handleSubmit={vi.fn()} />);
-    const button = screen.getByText("Join");
-    fireEvent.click(button);
-
-    expect(wsModule.ws.init).not.toHaveBeenCalled();
-  });
-
   //TODO: Review this test
   it.skip("logs error if validation fails", () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    render(<Username handleSubmit={vi.fn()} />);
+    render(<Username handleLogin={vi.fn()} handleRegister={vi.fn()} />);
     const input = screen.getByPlaceholderText("Name") as HTMLInputElement;
-    const button = screen.getByText("Join");
+    const button = screen.getAllByText("Login")[1];
 
     // Simulate invalid input (e.g., empty string)
     fireEvent.change(input, { target: { value: "" } });
