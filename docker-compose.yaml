@@ -20,6 +20,10 @@ services:
     container_name: chat_client
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /srv/letsencrypt-webroot:/var/www/certbot
     depends_on:
       - server
     restart: unless-stopped
