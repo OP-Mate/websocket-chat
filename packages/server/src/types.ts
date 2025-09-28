@@ -2,7 +2,7 @@ import { Request } from "express";
 import { JwtPayload } from "./utils/jwt";
 
 export interface AuthRequest extends Request {
-  cookies: Record<string, string>; // cookie-parser will populate this
+  cookies: Record<string, string>;
   user?: JwtPayload;
 }
 

@@ -3,12 +3,12 @@ import { Users } from "../../components/Users/Users.component";
 import { Window } from "../../components/Window/Window.component";
 import { Message } from "../../components/Message/Message.component";
 import { addMessage } from "../../store";
+import { api } from "../../api/api";
 
 export const Route = createFileRoute("/users/")({
   component: RouteComponent,
   loader: async () => {
-    const r = await fetch("/api/messages/1");
-    const { messages } = await r.json();
+    const { messages } = await api.getMessages("1");
 
     addMessage(messages);
   },

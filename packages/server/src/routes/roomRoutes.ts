@@ -2,8 +2,11 @@ import { Router } from "express";
 import { broadcastRoomsUpdate } from "../websocket/broadcast";
 import { addRoom, getAllPublicRooms } from "src/db/queries";
 import { sseMiddleware } from "src/middleware/sse";
+import { authMiddleware } from "src/middleware/auth";
 
 const router = Router();
+
+router.use(authMiddleware);
 
 router.post("/", (req, res) => {
   const { name } = req.body;
@@ -25,7 +28,6 @@ router.get("/", sseMiddleware, (req, res) => {
     res.write(`data: ${JSON.stringify(Array.from(allPublicRooms))}\n\n`);
   } catch (err) {
     console.error("SSE initial send failed:", err);
-    // don't close connection immediately; client can retry
   }
 });
 

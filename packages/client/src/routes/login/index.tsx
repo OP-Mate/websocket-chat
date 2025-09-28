@@ -4,7 +4,7 @@ import { Username } from "../../components/Username/Username.component";
 import { serverResponses } from "../../constants/responses";
 import { router } from "../../router";
 import { ws } from "../../services/ws";
-import type { AuthCode } from "chat-shared";
+import { api } from "../../api/api";
 
 export const Route = createFileRoute("/login/")({
   component: RouteComponent,
@@ -22,22 +22,13 @@ function RouteComponent() {
       const password = form.get("password") as string;
 
       try {
-        const response = await fetch("/api/auth/login", {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username, password }),
-        });
+        const response = await api.login({ username, password });
 
-        const json = await response.json();
-
-        if (json.code === "user_logged_in") {
+        if (response.code === "user_logged_in") {
           await ws.init();
           router.navigate({ to: "/users" });
         } else {
-          setError(serverResponses[json.code as AuthCode]);
+          setError(serverResponses[response.code]);
         }
       } catch (e) {
         console.log(e);
@@ -64,23 +55,13 @@ function RouteComponent() {
       }
 
       try {
-        const response = await fetch("/api/auth/register", {
-          method: "POST",
-          credentials: "include",
+        const response = await api.register({ username, password });
 
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username, password }),
-        });
-
-        const json = await response.json();
-
-        if (json.code === "user_created") {
+        if (response.code === "user_created") {
           await ws.init();
           router.navigate({ to: "/users" });
         } else {
-          setError(serverResponses[json.code as AuthCode]);
+          setError(serverResponses[response.code]);
         }
       } catch (e) {
         console.log(e);

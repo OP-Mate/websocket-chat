@@ -5,6 +5,7 @@ import { AddRoom } from "../../components/Rooms/Rooms.add";
 import { useCallback, useEffect, useState } from "react";
 import { Message } from "../../components/Message/Message.component";
 import { addMessage, resetMessages } from "../../store";
+import { api } from "../../api/api";
 
 export const Route = createFileRoute("/rooms/")({
   component: RouteComponent,
@@ -18,8 +19,7 @@ function RouteComponent() {
   useEffect(() => {
     (async () => {
       resetMessages();
-      const r = await fetch(`/api/messages/${selectedRoomId}`);
-      const { messages } = await r.json();
+      const { messages } = await api.getMessages(String(selectedRoomId));
 
       addMessage(messages);
     })();

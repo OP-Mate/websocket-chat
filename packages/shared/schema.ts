@@ -59,6 +59,11 @@ const ChatEventSchema = z.discriminatedUnion("type", [
   MessageInputSchema,
 ]);
 
+const AuthSchema = z.object({
+  username: z.string({ required_error: "Username is required" }),
+  password: z.coerce.string().min(1),
+});
+
 type ChatEventSchemaType = z.infer<typeof ChatEventSchema>;
 
 type UserSchemaType = z.infer<typeof UserSchema>;
@@ -70,7 +75,15 @@ type NewUserSchemaType = z.infer<typeof NewUserSchema>;
 
 type RoomSchemaType = z.infer<typeof RoomSchema>;
 
-export { ChatEventSchema, UserSchema, NewUserSchema, MessageInputSchema };
+type AuthSchemaType = z.infer<typeof AuthSchema>;
+
+export {
+  ChatEventSchema,
+  UserSchema,
+  NewUserSchema,
+  MessageInputSchema,
+  AuthSchema,
+};
 
 export type {
   ChatEventSchemaType,
@@ -79,4 +92,5 @@ export type {
   NewUserSchemaType,
   MessageInputSchemaType,
   RoomSchemaType,
+  AuthSchemaType,
 };

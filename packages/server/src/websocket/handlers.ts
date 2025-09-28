@@ -80,10 +80,8 @@ export const handleClose = (socket: AuthWebSocket) => {
     id,
   });
 
-  // Send to all other users of user disconnect
   for (const user of wss.clients) {
     if (user === socket) {
-      // TODO: Set user to offline
       console.log("set user to offline");
     }
   }
