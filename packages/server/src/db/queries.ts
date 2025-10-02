@@ -1,18 +1,21 @@
 import { db } from "./index";
 import { MessageSchemaType, RoomSchemaType } from "chat-shared";
 import { randomUUID } from "crypto";
+import { UUIDType } from "src/types";
 
 interface SqliteError extends Error {
   code?: string;
   errno?: number;
 }
 
-export function addUserToDB(username: string) {
+export function addUserToDB(username: string, hashedPassword: string) {
   const id = randomUUID();
 
   try {
-    const stmt = db.prepare(`INSERT INTO users (id, username) VALUES (?, ?)`);
-    stmt.run(id, username);
+    const stmt = db.prepare(
+      `INSERT INTO users (id, username, password_hash) VALUES (?, ?, ?)`
+    );
+    stmt.run(id, username, hashedPassword);
     return { success: true, id, username };
   } catch (err: unknown) {
     if (
@@ -75,4 +78,17 @@ export function addRoom(name: string) {
     .get(info.lastInsertRowid);
 
   return row as RoomSchemaType;
+}
+
+interface User {
+  password_hash: string;
+  username: string;
+  id: UUIDType;
+}
+
+export function findUser(username: string) {
+  const stmt = db.prepare(
+    `SELECT id, username, password_hash FROM users WHERE username = ?`
+  );
+  return stmt.get(username) as User;
 }

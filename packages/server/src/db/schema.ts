@@ -1,6 +1,9 @@
-import { db } from "./index";
+import { Database } from "better-sqlite3";
 
-db.exec(`
+export const createSchema = (db: Database) => {
+  db.pragma("foreign_keys = ON");
+
+  db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       username TEXT UNIQUE NOT NULL,
@@ -19,9 +22,21 @@ db.exec(`
     CREATE TABLE IF NOT EXISTS chat_rooms (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL UNIQUE,
-      is_private BOOLEAN DEFAULT FALSE,
+      is_private BOOLEAN DEFAULT 0,
       created_at INTEGER DEFAULT (strftime('%s','now'))
     );
 
-    INSERT OR IGNORE INTO chat_rooms (name, is_private) VALUES ('Main', False);
+    INSERT OR IGNORE INTO chat_rooms (name, is_private) VALUES ('Main', 0);
 `);
+};
+
+export const createMigration = (db: Database) => {
+  const cols = db.prepare(`PRAGMA table_info(users)`).all() as Array<{
+    name: string;
+  }>;
+
+  const hasPasswordHash = cols.some((c) => c.name === "password_hash");
+  if (!hasPasswordHash) {
+    db.exec(`ALTER TABLE users ADD COLUMN password_hash TEXT;`);
+  }
+};

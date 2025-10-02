@@ -44,7 +44,7 @@ describe("ChatWebSocket", () => {
       addUser,
       removeUser
     );
-    chatWs.init("alice").then();
+    chatWs.init().then();
   });
 
   afterEach(() => {

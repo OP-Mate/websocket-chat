@@ -9,11 +9,13 @@
     ]
   },
   "scripts": {
-    "dev": "concurrently \"pnpm --filter chat-shared run dev\" \"wait-on shared/dist/index.js && pnpm --filter chat-server run dev\"  \"wait-on shared/dist/index.js && pnpm --filter chat-client run dev\"",
     "client:test": "pnpm --filter chat-client run test",
     "client:lint": "pnpm --filter chat-client run lint",
     "server:lint": "pnpm --filter chat-server run lint",
-    "clean": "rimraf node_modules packages/*/node_modules packages/*/dist"
+    "clean": "rimraf node_modules packages/*/node_modules packages/*/dist",
+    "client": "pnpm --filter chat-client run dev",
+    "shared": "pnpm --filter chat-shared run dev",
+    "server": "pnpm --filter chat-server run dev"
   },
   "workspaces": [
     "./client",

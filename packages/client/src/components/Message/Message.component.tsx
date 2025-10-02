@@ -7,8 +7,6 @@ interface IMessageProps {
 }
 
 export const Message: React.FC<IMessageProps> = ({ roomId }) => {
-  console.log("roomId", roomId);
-
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
@@ -22,8 +20,6 @@ export const Message: React.FC<IMessageProps> = ({ roomId }) => {
         message,
         roomId,
       };
-
-      console.log(payload);
 
       const parsedPayload = ChatEventSchema.safeParse(payload);
 

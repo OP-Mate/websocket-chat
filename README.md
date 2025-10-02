@@ -43,30 +43,22 @@ pnpm install
 
 ### Run in development mode
 
-**Concurrently:**
-
-```sh
-pnpm run dev
-```
-
-or
-
 **shared:**
 
 ```sh
-pnpm --filter chat-shared run dev
+pnpm run shared
 ```
 
 **Client:**
 
 ```sh
-pnpm --filter chat-client run dev
+pnpm run client
 ```
 
 **Server:**
 
 ```sh
-pnpm --filter chat-server run dev
+pnpm run server
 ```
 
 ---

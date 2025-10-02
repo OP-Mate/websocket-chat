@@ -34,8 +34,6 @@ export const RoomsList: React.FC<IRoomListProps> = ({
     [setSelectedRoomId]
   );
 
-  console.log(rooms);
-
   return (
     <div className="flex flex-col border-2 p-3 border-line rounded-md overflow-hidden w-64">
       <ul className="flex flex-1 flex-col">
@@ -63,29 +61,3 @@ export const RoomsList: React.FC<IRoomListProps> = ({
     </div>
   );
 };
-
-//   const handleAddRoom = () => {
-//     fetch("/api/rooms", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ name: newRoomName }),
-//     });
-
-//     setNewRoomName("");
-//   };
-
-//   const handleSetNewNameRoom = (e) => {
-//     setNewRoomName(e.target.value);
-//   };
-
-//   const handleDeleteRoom = (roomId: string) => {
-//     fetch(`/api/rooms`, {
-//       method: "DELETE",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ roomId: roomId }),
-//     });
-//   };

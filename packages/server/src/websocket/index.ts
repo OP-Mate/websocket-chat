@@ -1,18 +1,19 @@
 import { WebSocket } from "ws";
-import { IncomingMessage } from "node:http";
 import { PORT } from "../index";
-import { handleCreate, handleMessage, handleClose } from "./handlers";
+import { handleMessage, handleClose, handleInitialMsg } from "./handlers";
+import { JwtPayload } from "src/utils/jwt";
 
-export const handleWebsocketConnection = (
-  socket: WebSocket,
-  req: IncomingMessage
-) => {
-  const id = handleCreate(socket, req);
+export type AuthWebSocket = WebSocket & { user: JwtPayload };
+
+export const handleWebsocketConnection = (socket: AuthWebSocket) => {
+  const id = socket.user.id;
+
+  handleInitialMsg(socket);
 
   socket.on("message", (rawData, isBinary) =>
     handleMessage(rawData, isBinary, id)
   );
 
-  socket.on("close", () => handleClose(socket, id));
+  socket.on("close", () => handleClose(socket));
   console.log(`WebSocket server is running on ws://localhost:${PORT}`);
 };

@@ -1,29 +1,49 @@
 import React from "react";
+import { useState } from "react";
+import { Login, type IUsernameProps } from "./Username.login";
+import { Register, type IRegisterProps } from "./Username.register";
 
-interface IUsernameProps {
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-}
+type Tab = "login" | "register";
 
-export const Username: React.FC<IUsernameProps> = ({ handleSubmit }) => {
+export const Username: React.FC<IUsernameProps & IRegisterProps> = ({
+  handleLogin,
+  handleRegister,
+  error,
+}) => {
+  const [tab, setTab] = useState<Tab>("login");
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg p-8 flex flex-col items-center">
-        <p className="mb-4 text-lg font-semibold">Login</p>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
-          <input
-            type="text"
-            name="name"
-            placeholder="Name"
-            required
-            className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+      <div className="bg-white rounded-lg shadow-lg p-8 flex flex-col items-center w-80">
+        <div className="flex mb-4 w-full">
           <button
-            type="submit"
-            className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700 transition"
+            className={`flex-1 py-2 rounded-tl-lg ${
+              tab === "login"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+            onClick={() => setTab("login")}
+            type="button"
           >
-            Join
+            Login
           </button>
-        </form>
+          <button
+            className={`flex-1 py-2 rounded-tr-lg ${
+              tab === "register"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+            onClick={() => setTab("register")}
+            type="button"
+          >
+            Register
+          </button>
+        </div>
+        {tab === "login" ? (
+          <Login handleLogin={handleLogin} error={error} />
+        ) : (
+          <Register handleRegister={handleRegister} error={error} />
+        )}
       </div>
     </div>
   );
