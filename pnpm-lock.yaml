@@ -186,6 +186,9 @@ importers:
       cookie-parser:
         specifier: ^1.4.7
         version: 1.4.7
+      custom-env:
+        specifier: ^2.0.6
+        version: 2.0.6
       eslint:
         specifier: ^9.25.0
         version: 9.32.0(jiti@1.21.7)
@@ -1371,6 +1374,9 @@ packages:
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
 
+  custom-env@2.0.6:
+    resolution: {integrity: sha512-o/8u77ot3u/vujfic+8caf7j3rAsFLCueLDynnCHB2+Clr1G1v3YL2NsnOQ3aZgAlHsdFHUSzWzVnkU96dn6lg==}
+
   data-urls@5.0.0:
     resolution: {integrity: sha512-ZYP5VBHshaDAiVZxjbRVcFJpc+4xGgT0bK3vzy1HLN8jTO975HEbuYzZJcHoQEY5K1a0z8YayJkyVETa08eNTg==}
     engines: {node: '>=18'}
@@ -1433,6 +1439,13 @@ packages:
 
   dom-accessibility-api@0.6.3:
     resolution: {integrity: sha512-7ZgogeTnjuHbo+ct10G9Ffp0mif17idi0IyWNVA/wcwcm7NPOD/WEHVP3n7n3MhXqxoIYm8d6MuZohYWIZ4T3w==}
+
+  dotenv-expand@5.1.0:
+    resolution: {integrity: sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==}
+
+  dotenv@17.2.2:
+    resolution: {integrity: sha512-Sf2LSQP+bOlhKWWyhFsn0UsfdK/kCWRv1iuA2gXAwt3dyNabr6QSj00I2V10pidqz69soatm9ZwZvpQMTIOd5Q==}
+    engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -4164,6 +4177,11 @@ snapshots:
 
   csstype@3.1.3: {}
 
+  custom-env@2.0.6:
+    dependencies:
+      dotenv: 17.2.2
+      dotenv-expand: 5.1.0
+
   data-urls@5.0.0:
     dependencies:
       whatwg-mimetype: 4.0.0
@@ -4202,6 +4220,10 @@ snapshots:
   dom-accessibility-api@0.5.16: {}
 
   dom-accessibility-api@0.6.3: {}
+
+  dotenv-expand@5.1.0: {}
+
+  dotenv@17.2.2: {}
 
   dunder-proto@1.0.1:
     dependencies:

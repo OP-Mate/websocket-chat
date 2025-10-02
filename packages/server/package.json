@@ -36,6 +36,7 @@
     "chat-shared": "workspace:*",
     "cookie": "^1.0.2",
     "cookie-parser": "^1.4.7",
+    "custom-env": "^2.0.6",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",

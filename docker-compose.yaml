@@ -19,11 +19,11 @@ services:
       dockerfile: packages/client/Dockerfile
     container_name: chat_client
     ports:
-      - "80:80"
-      - "443:443"
+      - "${HTTP_PORT}:80"
+      - "${HTTPS_PORT}:443"
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-      - /srv/letsencrypt-webroot:/var/www/certbot
+      - "${LETSENCRYPT_PATH}:/etc/letsencrypt:ro"
+      - "${LETSENCRYPT_WEBROOT}:/var/www/certbot"
     depends_on:
       - server
     restart: unless-stopped

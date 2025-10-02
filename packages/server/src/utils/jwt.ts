@@ -1,11 +1,10 @@
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 import { createSecretKey } from "crypto";
 import type { UUIDType } from "src/types";
+import { env } from "env";
 
-const JWT_SECRET = "your_super_secret_jwt_key_here_asd_asd_asd_er";
-
-const JWT_EXPIRES_IN = "7d";
-const secret = JWT_SECRET;
+const JWT_EXPIRES_IN = env.JWT_EXPIRES_IN;
+const secret = env.JWT_SECRET;
 
 const secretKey = createSecretKey(Buffer.from(secret, "utf-8"));
 
