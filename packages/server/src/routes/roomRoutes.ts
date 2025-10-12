@@ -1,34 +1,22 @@
 import { Router } from "express";
-import { broadcastRoomsUpdate } from "../websocket/broadcast";
-import { addRoom, getAllPublicRooms } from "src/db/queries";
 import { sseMiddleware } from "src/middleware/sse";
 import { authMiddleware } from "src/middleware/auth";
+import { postAddRoom, getAllRooms } from "src/controllers/roomsController";
+import z from "zod";
+import { validateBody } from "src/middleware/validation";
 
 const router = Router();
 
+const AddRoomBodySchema = z.object({
+  name: z.string({ required_error: "Room name is required" }),
+});
+
+export type AddRoomBodySchemaType = z.infer<typeof AddRoomBodySchema>;
+
 router.use(authMiddleware);
 
-router.post("/", (req, res) => {
-  const { name } = req.body;
-  if (!name || typeof name !== "string") {
-    return res.status(400).json({ error: "Room name is required" });
-  }
+router.post("/", validateBody(AddRoomBodySchema), postAddRoom);
 
-  const newRoom = addRoom(name);
-
-  res.status(201).json({ room: newRoom });
-
-  // Notify all SSE clients about the new room
-  broadcastRoomsUpdate();
-});
-
-router.get("/", sseMiddleware, (req, res) => {
-  try {
-    const allPublicRooms = getAllPublicRooms();
-    res.write(`data: ${JSON.stringify(Array.from(allPublicRooms))}\n\n`);
-  } catch (err) {
-    console.error("SSE initial send failed:", err);
-  }
-});
+router.get("/", sseMiddleware, getAllRooms);
 
 export { router as roomRoutes };
