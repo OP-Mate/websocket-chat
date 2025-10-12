@@ -2,14 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Users } from "../../components/Users/Users.component";
 import { Window } from "../../components/Window/Window.component";
 import { Message } from "../../components/Message/Message.component";
-import { addMessage } from "../../store";
+import { addMessage, resetMessages } from "../../store";
 import { api } from "../../api/api";
 
 export const Route = createFileRoute("/users/")({
   component: RouteComponent,
   loader: async () => {
     const { messages } = await api.getMessages("1");
-
+    resetMessages();
     addMessage(messages);
   },
 });

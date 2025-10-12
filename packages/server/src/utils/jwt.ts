@@ -1,6 +1,5 @@
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 import { createSecretKey } from "crypto";
-import type { UUIDType } from "src/types";
 import { env } from "env";
 
 const JWT_EXPIRES_IN = env.JWT_EXPIRES_IN;
@@ -9,7 +8,7 @@ const secret = env.JWT_SECRET;
 const secretKey = createSecretKey(Buffer.from(secret, "utf-8"));
 
 export interface JwtPayload extends JWTPayload {
-  id: UUIDType;
+  id: string;
   username: string;
 }
 

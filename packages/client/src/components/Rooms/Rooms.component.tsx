@@ -38,12 +38,11 @@ export const RoomsList: React.FC<IRoomListProps> = ({
     <div className="flex flex-col border-2 p-3 border-line rounded-md overflow-hidden w-64">
       <ul className="flex flex-1 flex-col">
         {rooms.map((room) => (
-          <button onClick={() => selectRoom(room.id)}>
+          <button key={room.id} onClick={() => selectRoom(room.id)}>
             <li
               className={`flex items-center gap-3 first:border-t border-b px-3 border-line py-3 border-opacity-60 ${
                 room.id === selectedRoomId ? "bg-blue-100" : ""
               }`}
-              key={room.id}
             >
               <span className="text-lg font-medium">{room.name}</span>
             </li>

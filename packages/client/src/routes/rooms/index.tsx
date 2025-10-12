@@ -17,12 +17,20 @@ function RouteComponent() {
   const [selectedRoomId, setSelectedRoomId] = useState(1);
 
   useEffect(() => {
+    let cancelled = false;
+
     (async () => {
       resetMessages();
       const { messages } = await api.getMessages(String(selectedRoomId));
 
-      addMessage(messages);
+      if (!cancelled) {
+        addMessage(messages);
+      }
     })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [selectedRoomId]);
 
   const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
