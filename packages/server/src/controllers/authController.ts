@@ -3,6 +3,7 @@ import { hashPassword } from "src/utils/password";
 import { addUserToDB, findUser } from "../db/queries";
 import { verifyPassword } from "src/utils/password";
 import { generateToken } from "src/utils/jwt";
+import { AuthRequest } from "src/types";
 
 interface IRegister {
   username: string;
@@ -97,4 +98,13 @@ export const login = async (req: Request, res: Response) => {
     console.error("Error verifying password", error);
     return res.status(500).json({ code: "internal_server_error" });
   }
+};
+
+export const me = async (req: AuthRequest, res: Response) => {
+  return res.status(200).json({
+    user: {
+      id: req.user?.id,
+      username: req.user?.username,
+    },
+  });
 };

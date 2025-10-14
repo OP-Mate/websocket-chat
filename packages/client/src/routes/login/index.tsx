@@ -5,6 +5,7 @@ import { serverResponses } from "../../constants/responses";
 import { router } from "../../router";
 import { ws } from "../../services/ws";
 import { api } from "../../api/api";
+import { clearAuthCache } from "../_authenticated";
 
 export const Route = createFileRoute("/login/")({
   component: RouteComponent,
@@ -25,6 +26,8 @@ function RouteComponent() {
         const response = await api.login({ username, password });
 
         if (response.code === "user_logged_in") {
+          clearAuthCache();
+
           await ws.init();
           router.navigate({ to: "/users" });
         } else {

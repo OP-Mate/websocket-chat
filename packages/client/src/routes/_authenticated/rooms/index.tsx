@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { RoomsList } from "../../components/Rooms/Rooms.component";
-import { Window } from "../../components/Window/Window.component";
-import { AddRoom } from "../../components/Rooms/Rooms.add";
+import { RoomsList } from "../../../components/Rooms/Rooms.component";
+import { Window } from "../../../components/Window/Window.component";
+import { AddRoom } from "../../../components/Rooms/Rooms.add";
 import { useCallback, useEffect, useState } from "react";
-import { Message } from "../../components/Message/Message.component";
-import { addMessage, resetMessages } from "../../store";
-import { api } from "../../api/api";
+import { Message } from "../../../components/Message/Message.component";
+import { addMessage, resetMessages } from "../../../store";
+import { api } from "../../../api/api";
 
-export const Route = createFileRoute("/rooms/")({
+export const Route = createFileRoute("/_authenticated/rooms/")({
   component: RouteComponent,
 });
 

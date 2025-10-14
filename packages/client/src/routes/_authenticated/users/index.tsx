@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Users } from "../../components/Users/Users.component";
-import { Window } from "../../components/Window/Window.component";
-import { Message } from "../../components/Message/Message.component";
-import { addMessage, resetMessages } from "../../store";
-import { api } from "../../api/api";
+import { Users } from "../../../components/Users/Users.component";
+import { Window } from "../../../components/Window/Window.component";
+import { Message } from "../../../components/Message/Message.component";
+import { addMessage, resetMessages } from "../../../store";
+import { api } from "../../../api/api";
 
-export const Route = createFileRoute("/users/")({
+export const Route = createFileRoute("/_authenticated/users/")({
   component: RouteComponent,
   loader: async () => {
     const { messages } = await api.getMessages("1");

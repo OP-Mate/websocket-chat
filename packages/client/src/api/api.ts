@@ -35,6 +35,18 @@ export class Api {
       throw new Error(error instanceof Error ? error.message : String(error));
     }
   }
+
+  public async me() {
+    try {
+      const response = await apiClient.get<{
+        user: { id: string; username: string };
+      }>("/auth/me");
+
+      return response;
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : String(error));
+    }
+  }
 }
 
 export const api = new Api();

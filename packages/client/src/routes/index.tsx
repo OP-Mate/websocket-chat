@@ -16,5 +16,5 @@ function RouteComponent() {
     }
   }, [userId]);
 
-  return <div>Landing page</div>;
+  return null;
 }
