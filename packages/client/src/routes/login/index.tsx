@@ -28,7 +28,6 @@ function RouteComponent() {
         if (response.code === "user_logged_in") {
           clearAuthCache();
 
-          await ws.init();
           router.navigate({ to: "/users" });
         } else {
           setError(serverResponses[response.code]);
@@ -61,7 +60,6 @@ function RouteComponent() {
         const response = await api.register({ username, password });
 
         if (response.code === "user_created") {
-          await ws.init();
           router.navigate({ to: "/users" });
         } else {
           setError(serverResponses[response.code]);

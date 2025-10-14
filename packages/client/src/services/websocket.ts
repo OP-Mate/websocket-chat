@@ -33,6 +33,8 @@ export class ChatWebSocket {
   }
 
   init() {
+    if (this.ws) return;
+
     this.ws = new WebSocket(`${this.url}`);
     this.ws.onmessage = this.handleMessage.bind(this);
     return new Promise<void>((resolve, reject) => {

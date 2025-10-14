@@ -1,9 +1,11 @@
 import { api } from "../api/api";
 import { createFileRoute, redirect, Outlet } from "@tanstack/react-router";
+import { ws } from "../services/ws";
+import type { UserSchemaType } from "chat-shared";
 
 let authState: {
   isAuthenticated: boolean;
-  user: any;
+  user: UserSchemaType;
   lastCheck: number;
 } | null = null;
 
@@ -55,6 +57,8 @@ export const Route = createFileRoute("/_authenticated")({
         to: "/login",
         search: { redirect: location.href },
       });
+    } else {
+      await ws.init();
     }
   },
   component: AuthenticatedLayout,
