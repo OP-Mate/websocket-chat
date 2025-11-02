@@ -1,5 +1,5 @@
 import { ChatWebSocket } from "./websocket";
-import { addMessage, addUser, deleteUser } from "../store";
+import { addMessage, addUser, offlineUser } from "../store";
 
 const PORT = import.meta.env.DEV ? 8080 : window.location.port;
 
@@ -8,5 +8,5 @@ export const ws = new ChatWebSocket(
   `${protocol}://${window.location.hostname}:${PORT}/ws/`,
   addMessage,
   addUser,
-  deleteUser
+  offlineUser
 );

@@ -47,12 +47,12 @@ describe("WebSocketStore actions/selectors", () => {
     expect(result.current).toEqual([user1, user2]);
   });
 
-  it("deleteUser removes a user by id", () => {
+  it("offlineUser removes a user by id", () => {
     const { result } = renderHook(store.useUsers);
 
     act(() => {
       store.addUser([user1, user2]);
-      store.deleteUser("1");
+      store.offlineUser("1");
     });
     expect(result.current).toEqual([user2]);
   });

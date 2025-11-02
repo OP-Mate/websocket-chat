@@ -5,31 +5,36 @@ import {
   type UserSchemaType,
 } from "chat-shared";
 import type { SafeParseReturnType } from "zod";
-import { setUserId } from "../store";
+import {
+  addOrUpdateUser,
+  setUser,
+  addPendingMessage,
+  getSelectedRoomId,
+} from "../store";
 
 export type AddMessageFn = (msg: MessageSchemaType[]) => void;
 export type AddUserFn = (usr: UserSchemaType[]) => void;
-export type RemoveUserFn = (id: string) => void;
+export type offlineUserFn = (id: string) => void;
 
 export class ChatWebSocket {
   url: string;
   ws: WebSocket | null;
   addMessage: AddMessageFn;
   addUser: AddUserFn;
-  removeUser: RemoveUserFn;
+  offlineUser: offlineUserFn;
 
   constructor(
     url: string,
     addMessage: AddMessageFn,
     addUser: AddUserFn,
-    removeUser: RemoveUserFn
+    offlineUser: offlineUserFn
   ) {
     this.url = url;
     this.ws = null;
     this.sendMessage = this.sendMessage.bind(this);
     this.addMessage = addMessage;
     this.addUser = addUser;
-    this.removeUser = removeUser;
+    this.offlineUser = offlineUser;
   }
 
   init() {
@@ -69,17 +74,26 @@ export class ChatWebSocket {
 
     switch (result.data.type) {
       case "message": {
-        this.addMessage([result.data]);
+        const { sender_id, roomId } = result.data;
+
+        const selectedRoomId = getSelectedRoomId();
+
+        if (roomId === selectedRoomId) {
+          this.addMessage([result.data]);
+        } else {
+          addPendingMessage(sender_id);
+        }
         break;
       }
-      case "new_user": {
-        this.addUser([result.data.user]);
+      case "online_user":
+      case "offline_user": {
+        addOrUpdateUser(result.data.user);
         break;
       }
 
       case "all_users": {
         this.addUser(result.data.users);
-        setUserId(result.data.userId);
+        setUser(result.data);
 
         break;
       }
@@ -87,11 +101,6 @@ export class ChatWebSocket {
       case "join_failed": {
         console.log("joined failed", result.data.error);
         return;
-      }
-
-      case "delete": {
-        this.removeUser(result.data.id);
-        break;
       }
 
       default:

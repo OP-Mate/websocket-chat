@@ -3,15 +3,21 @@ import { PORT } from "../index";
 import { handleMessage, handleClose, handleInitialMsg } from "./handlers";
 import { JwtPayload } from "src/utils/jwt";
 
-export type AuthWebSocket = WebSocket & { user: JwtPayload };
+export interface AuthWebSocket extends WebSocket {
+  user: JwtPayload;
+  roomId?: number;
+  lastPing?: number;
+  connectionTime?: number;
+  isActive?: boolean;
+}
 
 export const handleWebsocketConnection = (socket: AuthWebSocket) => {
-  const id = socket.user.id;
+  const senderId = socket.user.id;
 
   handleInitialMsg(socket);
 
   socket.on("message", (rawData, isBinary) =>
-    handleMessage(rawData, isBinary, id)
+    handleMessage(rawData, isBinary, senderId)
   );
 
   socket.on("close", () => handleClose(socket));

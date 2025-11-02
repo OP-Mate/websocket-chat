@@ -4,8 +4,9 @@ import { Window } from "../../../components/Window/Window.component";
 import { AddRoom } from "../../../components/Rooms/Rooms.add";
 import { useCallback, useEffect, useState } from "react";
 import { Message } from "../../../components/Message/Message.component";
-import { addMessage, resetMessages } from "../../../store";
+import { addMessage, resetMessages, useSelectedRoomId } from "../../../store";
 import { api } from "../../../api/api";
+import { NoChannel } from "../../../components/NoChannel/NoChannel.component";
 
 export const Route = createFileRoute("/_authenticated/rooms/")({
   component: RouteComponent,
@@ -14,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/rooms/")({
 function RouteComponent() {
   const [showAddRoom, setShowAddRoom] = useState(false);
 
-  const [selectedRoomId, setSelectedRoomId] = useState(1);
+  const selectedRoomId = useSelectedRoomId();
 
   useEffect(() => {
     let cancelled = false;
@@ -54,12 +55,18 @@ function RouteComponent() {
     <div className="list-none flex flex-row flex-1 gap-3">
       <RoomsList
         setShowAddRoom={setShowAddRoom}
-        setSelectedRoomId={setSelectedRoomId}
         selectedRoomId={selectedRoomId}
       />
       <div className="flex flex-1 flex-col w-64 gap-3">
-        <Window />
-        <Message roomId={selectedRoomId} />
+        {selectedRoomId ? (
+          <>
+            <Window />
+            <Message />
+          </>
+        ) : (
+          <NoChannel />
+        )}
+
         {showAddRoom && <AddRoom handleSubmit={handleSubmit} />}
       </div>
     </div>

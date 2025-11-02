@@ -1,12 +1,11 @@
 import React, { useCallback } from "react";
 import { ws } from "../../services/ws";
 import { ChatEventSchema } from "chat-shared";
+import { useSelectedRoomId } from "../../store";
 
-interface IMessageProps {
-  roomId: number;
-}
+export const Message: React.FC = () => {
+  const selectedRoomId = useSelectedRoomId();
 
-export const Message: React.FC<IMessageProps> = ({ roomId }) => {
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
@@ -18,7 +17,7 @@ export const Message: React.FC<IMessageProps> = ({ roomId }) => {
       const payload = {
         type: "message_input",
         message,
-        roomId,
+        roomId: selectedRoomId,
       };
 
       const parsedPayload = ChatEventSchema.safeParse(payload);
@@ -29,7 +28,7 @@ export const Message: React.FC<IMessageProps> = ({ roomId }) => {
         })
         .catch((e) => console.error("error from the promise", e));
     },
-    [roomId]
+    [selectedRoomId]
   );
 
   return (

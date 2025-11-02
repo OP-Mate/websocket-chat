@@ -13,6 +13,7 @@ export default defineConfig({
     }),
     react(),
   ],
+
   server: {
     proxy: {
       "/api": {
@@ -21,6 +22,9 @@ export default defineConfig({
         secure: false,
       },
     },
+  },
+  build: {
+    sourcemap: true,
   },
   test: {
     environment: "jsdom",

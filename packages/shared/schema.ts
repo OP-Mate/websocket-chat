@@ -6,6 +6,7 @@ const UserSchema = z.object({
     .uuid()
     .default(() => globalThis.crypto.randomUUID()),
   username: z.string(),
+  is_online: z.number(),
 });
 
 // Define each variant
@@ -13,10 +14,11 @@ const AllUserSchema = z.object({
   type: z.literal("all_users"),
   users: z.array(UserSchema),
   userId: z.string().uuid(),
+  username: z.string(),
 });
 
-const NewUserSchema = z.object({
-  type: z.literal("new_user"),
+const OnlineUserSchema = z.object({
+  type: z.literal("online_user"),
   user: UserSchema,
 });
 
@@ -32,6 +34,7 @@ const MessageSchema = z.object({
   message: z.string(),
   created_at: z.number(),
   sender_id: z.string().uuid(),
+  roomId: z.number(),
 });
 
 const JoinFailedSchema = z.object({
@@ -39,9 +42,9 @@ const JoinFailedSchema = z.object({
   error: z.string(),
 });
 
-const DeleteSchema = z.object({
-  type: z.literal("delete"),
-  id: z.string().uuid(),
+const OfflineSchema = z.object({
+  type: z.literal("offline_user"),
+  user: UserSchema,
 });
 
 const RoomSchema = z.object({
@@ -53,8 +56,8 @@ const RoomSchema = z.object({
 const ChatEventSchema = z.discriminatedUnion("type", [
   AllUserSchema,
   MessageSchema,
-  DeleteSchema,
-  NewUserSchema,
+  OfflineSchema,
+  OnlineUserSchema,
   JoinFailedSchema,
   MessageInputSchema,
 ]);
@@ -71,16 +74,18 @@ type UserSchemaType = z.infer<typeof UserSchema>;
 type MessageSchemaType = z.infer<typeof MessageSchema>;
 type MessageInputSchemaType = z.infer<typeof MessageInputSchema>;
 
-type NewUserSchemaType = z.infer<typeof NewUserSchema>;
+type OnlineUserSchemaType = z.infer<typeof OnlineUserSchema>;
 
 type RoomSchemaType = z.infer<typeof RoomSchema>;
 
 type AuthSchemaType = z.infer<typeof AuthSchema>;
 
+type AllUserSchemaType = z.infer<typeof AllUserSchema>;
+
 export {
   ChatEventSchema,
   UserSchema,
-  NewUserSchema,
+  OnlineUserSchema,
   MessageInputSchema,
   AuthSchema,
 };
@@ -89,8 +94,9 @@ export type {
   ChatEventSchemaType,
   UserSchemaType,
   MessageSchemaType,
-  NewUserSchemaType,
+  OnlineUserSchemaType,
   MessageInputSchemaType,
   RoomSchemaType,
   AuthSchemaType,
+  AllUserSchemaType,
 };

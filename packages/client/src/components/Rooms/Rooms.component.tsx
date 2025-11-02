@@ -1,15 +1,14 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { type RoomSchemaType } from "chat-shared";
+import { setSelectedRoomId } from "../../store";
 
 interface IRoomListProps {
   setShowAddRoom: (bool: boolean) => void;
-  setSelectedRoomId: (roomId: number) => void;
   selectedRoomId: number;
 }
 
 export const RoomsList: React.FC<IRoomListProps> = ({
   setShowAddRoom,
-  setSelectedRoomId,
   selectedRoomId,
 }) => {
   const [rooms, setRooms] = useState<RoomSchemaType[]>([]);
@@ -27,18 +26,11 @@ export const RoomsList: React.FC<IRoomListProps> = ({
     };
   }, []);
 
-  const selectRoom = useCallback(
-    (roomId: number) => {
-      setSelectedRoomId(roomId);
-    },
-    [setSelectedRoomId]
-  );
-
   return (
     <div className="flex flex-col border-2 p-3 border-line rounded-md overflow-hidden w-64">
       <ul className="flex flex-1 flex-col">
         {rooms.map((room) => (
-          <button key={room.id} onClick={() => selectRoom(room.id)}>
+          <button key={room.id} onClick={() => setSelectedRoomId(room.id)}>
             <li
               className={`flex items-center gap-3 first:border-t border-b px-3 border-line py-3 border-opacity-60 ${
                 room.id === selectedRoomId ? "bg-blue-100" : ""

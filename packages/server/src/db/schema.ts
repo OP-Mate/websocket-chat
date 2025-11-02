@@ -21,7 +21,7 @@ export const createSchema = (db: Database) => {
     );
     CREATE TABLE IF NOT EXISTS chat_rooms (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL UNIQUE,
+      name TEXT UNIQUE,
       is_private BOOLEAN DEFAULT 0,
       created_at INTEGER DEFAULT (strftime('%s','now'))
     );
@@ -38,5 +38,24 @@ export const createMigration = (db: Database) => {
   const hasPasswordHash = cols.some((c) => c.name === "password_hash");
   if (!hasPasswordHash) {
     db.exec(`ALTER TABLE users ADD COLUMN password_hash TEXT;`);
+  }
+
+  const table = db
+    .prepare(
+      `SELECT name FROM sqlite_master WHERE type='table' AND name='chat_room_users'`
+    )
+    .get();
+  if (!table) {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS chat_room_users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        chat_room_id INTEGER NOT NULL,
+        user_id TEXT NOT NULL,
+        created_at INTEGER DEFAULT (strftime('%s','now')),
+        FOREIGN KEY (chat_room_id) REFERENCES chat_rooms(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        UNIQUE(chat_room_id, user_id)
+      );
+    `);
   }
 };

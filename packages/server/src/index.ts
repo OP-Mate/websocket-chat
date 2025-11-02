@@ -7,13 +7,18 @@ import { AuthWebSocket, handleWebsocketConnection } from "./websocket";
 import { authRoutes } from "./routes/authRoutes";
 import cookieParser from "cookie-parser";
 import { authFromRequest } from "./websocket/auth";
+import { privateRoutes } from "./routes/privateRoutes";
 
 const app = express();
 
 const server = createServer(app);
 
 export const PORT = 8080;
-export const wss = new WebSocketServer({ noServer: true });
+export const wss = new WebSocketServer({
+  noServer: true,
+}) as WebSocketServer & {
+  clients: Set<AuthWebSocket>;
+};
 
 wss.on("connection", handleWebsocketConnection);
 
@@ -37,6 +42,7 @@ app.use(express.json());
 app.use("/api/messages", messageRoutes);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/private", privateRoutes);
 
 server.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on http://localhost:${PORT}`);

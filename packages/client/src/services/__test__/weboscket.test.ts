@@ -11,7 +11,7 @@ import {
   ChatWebSocket,
   type AddMessageFn,
   type AddUserFn,
-  type RemoveUserFn,
+  type offlineUserFn,
 } from "../websocket.ts";
 
 const uuid = "2203afe3-9230-4fdd-bb7a-8a91a0534cee";
@@ -24,7 +24,7 @@ describe("ChatWebSocket", () => {
   };
   let addMessage: AddMessageFn;
   let addUser: AddUserFn;
-  let removeUser: RemoveUserFn;
+  let offlineUser: offlineUserFn;
   let chatWs: ChatWebSocket;
 
   beforeEach(() => {
@@ -37,12 +37,12 @@ describe("ChatWebSocket", () => {
     global.WebSocket = vi.fn(() => mockWebSocket);
     addMessage = vi.fn();
     addUser = vi.fn();
-    removeUser = vi.fn();
+    offlineUser = vi.fn();
     chatWs = new ChatWebSocket(
       "ws://localhost:8080",
       addMessage,
       addUser,
-      removeUser
+      offlineUser
     );
     chatWs.init().then();
   });
@@ -71,17 +71,17 @@ describe("ChatWebSocket", () => {
   });
 
   it("should call addUser on valid join event", () => {
-    const join = { type: "new_user", user: { id: uuid, username: "A" } };
+    const join = { type: "online_user", user: { id: uuid, username: "A" } };
     const event = { data: JSON.stringify(join) };
     chatWs.handleMessage(event as MessageEvent);
     expect(addUser).toHaveBeenCalledWith([join.user]);
   });
 
-  it("should call removeUser on valid delete event", () => {
+  it("should call offlineUser on valid delete event", () => {
     const del = { type: "delete", id: uuid };
     const event = { data: JSON.stringify(del) };
     chatWs.handleMessage(event as MessageEvent);
-    expect(removeUser).toHaveBeenCalledWith(uuid);
+    expect(offlineUser).toHaveBeenCalledWith(uuid);
   });
 
   it("should log error on invalid JSON", () => {

@@ -1,4 +1,5 @@
 import type {
+  AllUserSchemaType,
   MessageSchemaType,
   RoomSchemaType,
   UserSchemaType,
@@ -11,6 +12,9 @@ interface WebSocketStore {
   name: string;
   userId: string;
   rooms: RoomSchemaType[];
+  selectedUser: string;
+  pendingMessagesId: string[];
+  selectedRoomId: number;
 }
 
 export const useWebSocketStore = create<WebSocketStore>(() => ({
@@ -19,12 +23,15 @@ export const useWebSocketStore = create<WebSocketStore>(() => ({
   users: [],
   name: "",
   rooms: [],
+  selectedUser: "",
+  pendingMessagesId: [],
+  selectedRoomId: 0,
 }));
 
 export const addMessage = (message: MessageSchemaType[]) => {
-  useWebSocketStore.setState((s) => ({
-    messages: [...s.messages, ...message],
-  }));
+  useWebSocketStore.setState((s) => {
+    return { messages: [...s.messages, ...message] };
+  });
 };
 
 export const addRooms = (rooms: []) => {
@@ -45,18 +52,67 @@ export const addUser = (user: UserSchemaType[]) => {
   }));
 };
 
-export const setUserId = (userId: string) => {
-  useWebSocketStore.setState({
-    userId,
+export const addPendingMessage = (userId: string) => {
+  useWebSocketStore.setState((s) => ({
+    pendingMessagesId: [...s.pendingMessagesId, userId],
+  }));
+};
+
+export const removePendingMessage = (userId: string) => {
+  useWebSocketStore.setState((s) => ({
+    pendingMessagesId: s.pendingMessagesId.filter((id) => id !== userId),
+  }));
+};
+
+export const addOrUpdateUser = (user: UserSchemaType) => {
+  useWebSocketStore.setState((s) => {
+    const existingIndex = s.users.findIndex((u) => u.id === user.id);
+    if (existingIndex !== -1) {
+      const updatedUser = [...s.users];
+      updatedUser[existingIndex] = {
+        ...updatedUser[existingIndex],
+        is_online: user.is_online,
+      };
+      return { users: updatedUser };
+    }
+    return { users: [...s.users, user] };
   });
 };
 
-export const deleteUser = (id: string) => {
+export const setUser = (user: AllUserSchemaType) => {
+  useWebSocketStore.setState({
+    userId: user.userId,
+    name: user.username,
+  });
+};
+
+export const offlineUser = (id: string) => {
   useWebSocketStore.setState((s) => ({
-    users: s.users.filter((user) => user.id !== id),
+    users: s.users.map((user) => {
+      if (user.id === id) {
+        return {
+          ...user,
+          is_online: 0,
+        };
+      }
+      return user;
+    }),
   }));
 };
+
+export const setSelectedRoomId = (id: number) => {
+  useWebSocketStore.setState({ selectedRoomId: id });
+};
+
+export const useSelectedRoomId = () =>
+  useWebSocketStore((s) => s.selectedRoomId);
+
+export const getSelectedRoomId = (): number =>
+  useWebSocketStore.getState().selectedRoomId;
 
 export const useMessages = () => useWebSocketStore((s) => s.messages);
 export const useUsers = () => useWebSocketStore((s) => s.users);
 export const useUserId = () => useWebSocketStore((s) => s.userId);
+export const useUsername = () => useWebSocketStore((s) => s.name);
+export const usePendingMessages = () =>
+  useWebSocketStore((s) => s.pendingMessagesId);

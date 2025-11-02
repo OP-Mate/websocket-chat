@@ -47,6 +47,16 @@ export class Api {
       throw new Error(error instanceof Error ? error.message : String(error));
     }
   }
+
+  public async joinPrivateRoom(id: string) {
+    try {
+      const response = await apiClient.get<IMessagesResponse>(`/private/${id}`);
+
+      return response;
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : String(error));
+    }
+  }
 }
 
 export const api = new Api();
