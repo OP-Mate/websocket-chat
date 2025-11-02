@@ -5,6 +5,7 @@ import type {
   UserSchemaType,
 } from "chat-shared";
 import { create } from "zustand";
+import { api } from "../api/api";
 
 interface WebSocketStore {
   messages: MessageSchemaType[];
@@ -113,3 +114,14 @@ export const useUserId = () => useWebSocketStore((s) => s.userId);
 export const useUsername = () => useWebSocketStore((s) => s.name);
 export const usePendingMessages = () =>
   useWebSocketStore((s) => s.pendingMessagesId);
+
+export const getMessages = async (selectedRoomId: number) => {
+  resetMessages();
+
+  try {
+    const { messages } = await api.getMessages(selectedRoomId);
+    addMessage(messages);
+  } catch (e) {
+    console.log(e);
+  }
+};

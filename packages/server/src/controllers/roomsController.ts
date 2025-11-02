@@ -5,16 +5,18 @@ import { broadcastRoomsUpdate } from "../websocket/broadcast";
 import { addRoom, getAllPublicRooms } from "src/db/queries";
 import { AddRoomBodySchemaType } from "src/routes/roomRoutes";
 
-export const postAddRoom =
-  () => (req: AuthRequest<AddRoomBodySchemaType>, res: Response) => {
-    const { name } = req.body;
+export const postAddRoom = (
+  req: AuthRequest<AddRoomBodySchemaType>,
+  res: Response
+) => {
+  const { name } = req.body;
 
-    const newRoom = addRoom(name);
+  const newRoom = addRoom(name);
 
-    res.status(201).json({ room: newRoom });
+  res.status(201).json({ room: newRoom });
 
-    broadcastRoomsUpdate();
-  };
+  broadcastRoomsUpdate();
+};
 
 export const getAllRooms = (_req: AuthRequest, res: Response) => {
   try {

@@ -25,7 +25,7 @@ export class Api {
     }
   }
 
-  public async getMessages(roomId: string) {
+  public async getMessages(roomId: number) {
     try {
       const response = await apiClient.get<IMessagesResponse>(
         `/messages/${roomId}`
@@ -51,6 +51,17 @@ export class Api {
   public async joinPrivateRoom(id: string) {
     try {
       const response = await apiClient.get<IMessagesResponse>(`/private/${id}`);
+
+      return response;
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : String(error));
+    }
+  }
+  public async AddRoom(roomName: string) {
+    try {
+      const response = await apiClient.post(`/rooms`, { name: roomName });
+
+      console.log(response);
 
       return response;
     } catch (error) {
