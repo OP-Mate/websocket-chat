@@ -1,45 +1,22 @@
-import { Router, type Response } from "express";
-import {
-  addChatRoomUser,
-  addRoom,
-  findPrivateRoomWithMessages,
-} from "src/db/queries";
+import { Router } from "express";
+import { joinPrivateRoom } from "src/controllers/privateController";
+
 import { authMiddleware } from "src/middleware/auth";
-import { AuthRequest } from "src/types";
+import { validateParams } from "src/middleware/validation";
+import z from "zod";
 
 const router = Router();
 
+const JoinPrivateParamsSchema = z.object({
+  id: z.string(),
+});
+
+export type JoinPrivateParamsSchemaType = z.infer<
+  typeof JoinPrivateParamsSchema
+>;
+
 router.use(authMiddleware);
 
-router.get("/:id", (req: AuthRequest, res: Response) => {
-  const senderId = req.user?.id;
-  const receiveId = req.params?.id;
-
-  if (!senderId) {
-    res.status(401).json({ code: "unauthenticated" });
-    return;
-  }
-
-  if (!receiveId) {
-    res.status(401).json({ code: "validation_failed" });
-    return;
-  }
-
-  const foundRoomsMessages = findPrivateRoomWithMessages(senderId, receiveId);
-
-  if (foundRoomsMessages == null) {
-    const newRoom = addRoom(null, 1);
-
-    addChatRoomUser(newRoom.id, senderId);
-    addChatRoomUser(newRoom.id, receiveId);
-
-    return res.status(200).json({ messages: [], roomId: newRoom.id });
-  }
-
-  return res.status(200).json({
-    messages: foundRoomsMessages.messages,
-    roomId: foundRoomsMessages.id,
-  });
-});
+router.get("/:id", validateParams(JoinPrivateParamsSchema), joinPrivateRoom);
 
 export { router as privateRoutes };

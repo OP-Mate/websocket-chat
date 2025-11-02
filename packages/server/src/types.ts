@@ -8,3 +8,5 @@ export interface AuthRequest<Body = object, Params = object>
 }
 
 export type UUIDType = `${string}-${string}-${string}-${string}-${string}`;
+
+export type NoopBody = object;
