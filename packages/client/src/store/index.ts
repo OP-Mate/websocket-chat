@@ -66,16 +66,13 @@ export const removePendingMessage = (userId: string) => {
 
 export const addOrUpdateUser = (user: UserSchemaType) => {
   useWebSocketStore.setState((s) => {
-    const existingIndex = s.users.findIndex((u) => u.id === user.id);
-    if (existingIndex !== -1) {
-      const updatedUser = [...s.users];
-      updatedUser[existingIndex] = {
-        ...updatedUser[existingIndex],
-        is_online: user.is_online,
-      };
-      return { users: updatedUser };
-    }
-    return { users: [...s.users, user] };
+    const userExists = s.users.find((u) => u.id === user.id);
+
+    return {
+      users: userExists
+        ? s.users.map((u) => (u.id === user.id ? { ...u, ...user } : u))
+        : [...s.users, user],
+    };
   });
 };
 
