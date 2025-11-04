@@ -3,7 +3,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Username } from "../../components/Username/Username.component";
 import { serverResponses } from "../../constants/responses";
 import { router } from "../../router";
-import { ws } from "../../services/ws";
 import { api } from "../../api/api";
 import { clearAuthCache } from "../_authenticated";
 

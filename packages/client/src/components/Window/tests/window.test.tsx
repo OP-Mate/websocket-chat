@@ -13,6 +13,7 @@ const mockMessages: MessageSchemaType[] = [
     message: "Hello!",
     created_at: 1710000000000,
     sender_id: "123",
+    roomId: 1,
   },
   {
     id: 2,
@@ -20,6 +21,7 @@ const mockMessages: MessageSchemaType[] = [
     message: "Hi Alice!",
     created_at: 1710000001001,
     sender_id: "456",
+    roomId: 1,
   },
 ];
 
@@ -27,8 +29,9 @@ const usersMock: UserSchemaType[] = [
   {
     id: "123",
     username: "Alice",
+    is_online: 1,
   },
-  { id: "456", username: "Bob" },
+  { id: "456", username: "Bob", is_online: 1 },
 ];
 
 const mockUserId = "123";
@@ -37,6 +40,14 @@ vi.mock("randomcolor", () => ({
   __esModule: true,
   default: vi.fn(() => "#abcdef"),
 }));
+
+const mockScrollIntoView = vi.fn();
+
+// ✅ Add to global Element prototype
+Object.defineProperty(Element.prototype, "scrollIntoView", {
+  value: mockScrollIntoView,
+  writable: true,
+});
 
 describe("<Window />", () => {
   beforeEach(() => {

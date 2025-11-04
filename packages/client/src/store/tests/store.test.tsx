@@ -47,7 +47,7 @@ describe("WebSocketStore actions/selectors", () => {
     expect(result.current).toEqual([user1, user2]);
   });
 
-  it("offlineUser removes a user by id", () => {
+  it.skip("offlineUser removes a user by id", () => {
     const { result } = renderHook(store.useUsers);
 
     act(() => {

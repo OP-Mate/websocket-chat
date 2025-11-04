@@ -18,12 +18,12 @@ describe("<Message />", () => {
   });
 
   it("renders the input", () => {
-    render(<Message roomId={0} />);
+    render(<Message />);
     expect(screen.getByPlaceholderText("Type a message")).toBeInTheDocument();
   });
 
   it("calls ws.sendMessage with valid payload on submit", async () => {
-    render(<Message roomId={0} />);
+    render(<Message />);
     const input = screen.getByPlaceholderText(
       "Type a message"
     ) as HTMLInputElement;
@@ -44,7 +44,7 @@ describe("<Message />", () => {
   });
 
   it("clears the input after successful send", async () => {
-    render(<Message roomId={0} />);
+    render(<Message />);
     const input = screen.getByPlaceholderText(
       "Type a message"
     ) as HTMLInputElement;
