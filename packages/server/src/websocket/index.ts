@@ -2,8 +2,10 @@ import { WebSocket } from "ws";
 import { PORT } from "../index";
 import { handleMessage, handleClose, handleInitialMsg } from "./handlers";
 import { JwtPayload } from "src/utils/jwt";
+import { onlineStore } from "./onlineCheck";
 
 export interface AuthWebSocket extends WebSocket {
+  id: string;
   user: JwtPayload;
   roomId?: number;
   lastPing?: number;
@@ -19,6 +21,10 @@ export const handleWebsocketConnection = (socket: AuthWebSocket) => {
   socket.on("message", (rawData, isBinary) =>
     handleMessage(rawData, isBinary, senderId)
   );
+
+  socket.on("pong", () => {
+    onlineStore.add(senderId);
+  });
 
   socket.on("close", () => handleClose(socket));
   console.log(`WebSocket server is running on ws://localhost:${PORT}`);

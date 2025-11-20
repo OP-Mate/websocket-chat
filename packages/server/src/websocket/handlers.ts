@@ -8,6 +8,7 @@ import {
   getUserIdsByChatRoomId,
 } from "../db/queries";
 import { AuthWebSocket } from ".";
+import { onlineStore } from "./onlineCheck";
 
 function createArrayBuffer(msg: string) {
   return Buffer.from(msg, "utf-8");
@@ -38,11 +39,17 @@ function broadcastMsg(
 export const handleInitialMsg = (socket: AuthWebSocket) => {
   const { id, username } = socket.user;
 
+  onlineStore.add(id);
+
   const currentUsers = getAllUsersDB(id);
+
   socket.send(
     JSON.stringify({
       type: "all_users",
-      users: currentUsers,
+      users: currentUsers.map((user) => ({
+        ...user,
+        is_online: onlineStore.has(user.id) ? 1 : 0,
+      })),
       userId: id,
       username: username,
     }),
@@ -106,6 +113,8 @@ export const handleMessage = (
 export const handleClose = (socket: AuthWebSocket) => {
   const { id, username } = socket.user;
 
+  onlineStore.delete(id);
+
   const msg = JSON.stringify({
     type: "offline_user",
     user: {
@@ -117,7 +126,7 @@ export const handleClose = (socket: AuthWebSocket) => {
 
   for (const user of wss.clients) {
     if (user === socket) {
-      console.log("set user to offline");
+      onlineStore.delete(user.id);
     }
   }
   broadcastMsg(createArrayBuffer(msg), false);

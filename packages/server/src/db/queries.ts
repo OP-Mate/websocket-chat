@@ -39,13 +39,11 @@ export function addUserToDB(username: string, hashedPassword: string) {
 }
 
 export function getAllUsersDB(userId: string) {
-  const stmt = db.prepare(
-    `SELECT id, username, is_online FROM users WHERE id != ?`
-  );
+  const stmt = db.prepare(`SELECT id, username FROM users WHERE id != ?`);
 
   const info = stmt.all(userId);
 
-  return info;
+  return info as { id: string; username: string }[];
 }
 
 export function addMessageDB(
