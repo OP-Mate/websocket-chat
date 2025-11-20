@@ -90,7 +90,7 @@ export const offlineUser = (id: string) => {
       if (user.id === id) {
         return {
           ...user,
-          is_online: 0,
+          isOnline: false,
         };
       }
       return user;

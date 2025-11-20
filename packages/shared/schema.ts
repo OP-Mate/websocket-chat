@@ -6,7 +6,7 @@ const UserSchema = z.object({
     .uuid()
     .default(() => globalThis.crypto.randomUUID()),
   username: z.string(),
-  is_online: z.number(),
+  isOnline: z.boolean(),
 });
 
 // Define each variant

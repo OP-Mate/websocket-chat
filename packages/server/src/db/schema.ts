@@ -7,8 +7,7 @@ export const createSchema = (db: Database) => {
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       username TEXT UNIQUE NOT NULL,
-      created_at INTEGER DEFAULT (strftime('%s','now')),
-      is_online BOOLEAN DEFAULT TRUE
+      created_at INTEGER DEFAULT (strftime('%s','now'))
     );
     CREATE TABLE IF NOT EXISTS messages (
       id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -17,7 +17,7 @@ export const UserList: React.FC<IUserList> = ({
 
   const [selectedUser, setSelectedUser] = useState("");
 
-  const { id, username, is_online } = user;
+  const { id, username, isOnline } = user;
 
   const isUser = id === selectedUser;
 
@@ -38,13 +38,13 @@ export const UserList: React.FC<IUserList> = ({
           setSelectedUser(id);
         }}
       >
-        <Avatar id={id} is_online={is_online} />
+        <Avatar id={id} isOnline={isOnline} />
         <span
           style={{
             color: randomColor({ seed: id, luminosity: "dark" }),
           }}
           className={`text-lg font-medium flex-1 text-left ${
-            !is_online ? "opacity-50" : ""
+            !isOnline ? "opacity-50" : ""
           }`}
         >
           {username}
@@ -53,10 +53,10 @@ export const UserList: React.FC<IUserList> = ({
         <div className="flex flex-col items-end gap-1">
           <span
             className={`text-xs font-medium ${
-              is_online ? "text-green-600" : "text-red-500"
+              isOnline ? "text-green-600" : "text-red-500"
             }`}
           >
-            {is_online ? "Online" : "Offline"}
+            {isOnline ? "Online" : "Offline"}
           </span>
 
           {pendingMessages.includes(id) && (

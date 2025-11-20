@@ -48,7 +48,7 @@ export const handleInitialMsg = (socket: AuthWebSocket) => {
       type: "all_users",
       users: currentUsers.map((user) => ({
         ...user,
-        is_online: onlineStore.has(user.id) ? 1 : 0,
+        isOnline: onlineStore.has(user.id),
       })),
       userId: id,
       username: username,
@@ -60,7 +60,7 @@ export const handleInitialMsg = (socket: AuthWebSocket) => {
   // Send to all other users that this new user has connected
   const newUserMsg = JSON.stringify({
     type: "online_user",
-    user: { id: id, username: username, is_online: 1 },
+    user: { id: id, username: username, isOnline: true },
   });
 
   // Send to all other users of new user
@@ -120,7 +120,7 @@ export const handleClose = (socket: AuthWebSocket) => {
     user: {
       id,
       username,
-      is_online: 0,
+      isOnline: false,
     },
   });
 
