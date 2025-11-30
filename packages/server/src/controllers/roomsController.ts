@@ -21,8 +21,16 @@ export const postAddRoom = (
 export const getAllRooms = (_req: AuthRequest, res: Response) => {
   try {
     const allPublicRooms = getAllPublicRooms();
-    res.write(`data: ${JSON.stringify(Array.from(allPublicRooms))}\n\n`);
+
+    if (!allPublicRooms.success) {
+      return res.status(500).json({ message: allPublicRooms.error });
+    }
+
+    res.write(`data: ${JSON.stringify(allPublicRooms.data)}\n\n`);
   } catch (err) {
     console.error("SSE initial send failed:", err);
+    res
+      .status(500)
+      .write(`data: ${JSON.stringify({ error: "Internal server error" })}\n\n`);
   }
 };

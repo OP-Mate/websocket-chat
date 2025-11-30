@@ -43,10 +43,12 @@ export const handleInitialMsg = (socket: AuthWebSocket) => {
 
   const currentUsers = getAllUsersDB(id);
 
+  if (!currentUsers.success) return;
+
   socket.send(
     JSON.stringify({
       type: "all_users",
-      users: currentUsers.map((user) => ({
+      users: currentUsers.data.map((user) => ({
         ...user,
         isOnline: onlineStore.has(user.id),
       })),
@@ -90,21 +92,31 @@ export const handleMessage = (
 
       const chatRoomPrivate = getIsChatRoomPrivate(result.data.roomId);
 
-      const response = addMessageDB(
+      if (!chatRoomPrivate.success || !users.success) {
+        sendErrorToUser(senderId, "Invalid chat room", "INVALID_ROOM");
+        return;
+      }
+
+      const newMessage = addMessageDB(
         senderId,
         result.data.message,
         result.data.roomId
       );
 
+      if (!newMessage.success) {
+        sendErrorToUser(senderId, "Invalid message format", "INVALID_MESSAGE");
+        return;
+      }
+
       broadcastMsg(
         createArrayBuffer(
           JSON.stringify({
             type: "message",
-            ...response,
+            ...newMessage.data,
           })
         ),
         isBinary,
-        chatRoomPrivate ? users : null
+        chatRoomPrivate.success ? users.data : null
       );
     }
   }
@@ -132,3 +144,18 @@ export const handleClose = (socket: AuthWebSocket) => {
   broadcastMsg(createArrayBuffer(msg), false);
   console.log(`Client disconnected: ${id}`);
 };
+
+function sendErrorToUser(userId: string, message: string, code: string) {
+  wss.clients.forEach((client: AuthWebSocket) => {
+    if (client.user.id === userId && client.readyState === WebSocket.OPEN) {
+      client.send(
+        JSON.stringify({
+          type: "error",
+          error: message,
+          code: code,
+          timestamp: Date.now(),
+        })
+      );
+    }
+  });
+}

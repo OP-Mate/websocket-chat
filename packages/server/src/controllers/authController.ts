@@ -41,8 +41,8 @@ export const register = async (
     }
 
     const token = await generateToken({
-      id: userResult.id,
-      username: userResult.username,
+      id: userResult.data.id,
+      username: userResult.data.username,
     });
 
     res.cookie("access_token", token, {
@@ -54,7 +54,7 @@ export const register = async (
 
     return res
       .status(201)
-      .json({ code: "user_created", username: userResult.username });
+      .json({ code: "user_created", username: userResult.data.username });
   } catch (err) {
     console.error("register error:", err);
     return res.status(500).json({ message: "Internal server error" });
@@ -68,29 +68,31 @@ export const login = async (req: Request, res: Response) => {
     return res.status(400).json({ code: "username_required" });
   }
 
-  const user = findUser(username);
+  const userResult = findUser(username);
 
-  if (!user) {
+  if (!userResult.success || !userResult.data) {
     return res.status(401).json({ code: "incorrect_username_or_password" });
   }
 
   try {
-    const isMatched = await verifyPassword(password, user.password_hash);
+    const isMatched = await verifyPassword(
+      password,
+      userResult.data.password_hash
+    );
 
     if (!isMatched) {
       return res.status(401).json({ code: "incorrect_username_or_password" });
     }
 
     const token = await generateToken({
-      id: user.id,
-      username: user.username,
+      id: userResult.data.id,
+      username: userResult.data.username,
     });
 
     res.cookie("access_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      // consider short maxAge for access token and use a refresh token cookie
     });
 
     return res.status(201).json({ code: "user_logged_in", username: username });

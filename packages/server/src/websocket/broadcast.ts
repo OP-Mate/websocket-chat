@@ -6,7 +6,8 @@ export const sseClients: Response[] = [];
 
 export function broadcastRoomsUpdate() {
   const allPublicRooms = getAllPublicRooms();
-  const data = `data: ${JSON.stringify(Array.from(allPublicRooms))}\n\n`;
+  const rooms = allPublicRooms.success ? allPublicRooms.data : [];
+  const data = `data: ${JSON.stringify(rooms)}\n\n`;
 
   for (const client of sseClients) {
     try {

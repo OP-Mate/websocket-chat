@@ -21,17 +21,41 @@ export const joinPrivateRoom = (
 
   const foundRoomsMessages = findPrivateRoomWithMessages(senderId, receiveId);
 
-  if (foundRoomsMessages == null) {
+  if (!foundRoomsMessages.success) {
+    res
+      .status(500)
+      .json({ code: "database_error", error: foundRoomsMessages.error });
+    return;
+  }
+
+  if (foundRoomsMessages.data == null) {
     const newRoom = addRoom(null, 1);
 
-    addChatRoomUser(newRoom.id, senderId);
-    addChatRoomUser(newRoom.id, receiveId);
+    if (!newRoom.success) {
+      return res
+        .status(500)
+        .json({ code: "database_error", error: newRoom.error });
+    }
 
-    return res.status(200).json({ messages: [], roomId: newRoom.id });
+    const senderUser = addChatRoomUser(newRoom.data.id, senderId);
+    const receiveUser = addChatRoomUser(newRoom.data.id, receiveId);
+
+    if (!senderUser.success || !receiveUser.success) {
+      return res.status(500).json({
+        code: "database_error",
+        error: !senderUser.success
+          ? senderUser.error
+          : !receiveUser.success
+            ? receiveUser.error
+            : "Unknown error",
+      });
+    }
+
+    return res.status(200).json({ messages: [], roomId: newRoom.data.id });
   }
 
   return res.status(200).json({
-    messages: foundRoomsMessages.messages,
-    roomId: foundRoomsMessages.id,
+    messages: foundRoomsMessages.data?.messages || [],
+    roomId: foundRoomsMessages.data?.id,
   });
 };
