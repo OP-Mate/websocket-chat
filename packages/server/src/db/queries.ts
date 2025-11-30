@@ -82,8 +82,8 @@ export function addMessageDB(
         id: row.id,
         message: row.message,
         roomId: row.chat_room_id,
-        created_at: row.created_at,
-        sender_id: row.sender_id,
+        createdAt: row.created_at,
+        senderId: row.sender_id,
       },
     };
   } catch (err: unknown) {

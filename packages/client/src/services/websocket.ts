@@ -74,14 +74,14 @@ export class ChatWebSocket {
 
     switch (result.data.type) {
       case "message": {
-        const { sender_id, roomId } = result.data;
+        const { senderId, roomId } = result.data;
 
         const selectedRoomId = getSelectedRoomId();
 
         if (roomId === selectedRoomId) {
           this.addMessage([result.data]);
         } else {
-          addPendingMessage(sender_id);
+          addPendingMessage(senderId);
         }
         break;
       }

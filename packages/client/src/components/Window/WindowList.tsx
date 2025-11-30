@@ -12,34 +12,34 @@ export const WindowList: React.FC<WindowList> = ({ message }) => {
   const userId = useUserId();
   const users = useUsers();
 
-  const { sender_id, created_at, message: text } = message;
+  const { senderId, createdAt, message: text } = message;
 
-  const isUser = userId === sender_id;
+  const isUser = userId === senderId;
 
-  const user = users.find((user) => user.id === sender_id);
+  const user = users.find((user) => user.id === senderId);
   const userName = user?.username || "";
 
   return (
     <li className="flex flex-col gap-3">
       <div className={`flex gap-3 ${isUser ? "justify-end" : ""}`}>
-        {!isUser ? <Avatar id={sender_id} /> : null}
+        {!isUser ? <Avatar id={senderId} /> : null}
         <div>
           <span
             className="text-xs"
             style={{
               color: randomColor({
-                seed: sender_id,
+                seed: senderId,
                 luminosity: "dark",
               }),
             }}
           >
-            {userName} @{formatDate(created_at)}
+            {userName} @{formatDate(createdAt)}
           </span>
 
           <p
             style={{
               borderColor: randomColor({
-                seed: sender_id,
+                seed: senderId,
                 luminosity: "dark",
               }),
             }}

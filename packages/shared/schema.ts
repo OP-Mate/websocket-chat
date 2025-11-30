@@ -32,8 +32,8 @@ const MessageSchema = z.object({
   id: z.number(),
   type: z.literal("message"),
   message: z.string(),
-  created_at: z.number(),
-  sender_id: z.string().uuid(),
+  createdAt: z.number(),
+  senderId: z.string().uuid(),
   roomId: z.number(),
 });
 
