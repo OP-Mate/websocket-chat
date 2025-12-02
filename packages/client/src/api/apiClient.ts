@@ -1,13 +1,15 @@
+import type { ApiCodeError } from "chat-shared";
 import { router } from "../router";
 
-// ...existing code...
-export type ApiErrorBody = { message?: string; [k: string]: unknown };
+export type ApiErrorBody = {
+  code: ApiCodeError;
+};
 
 export class ApiError extends Error {
   status: number;
-  body?: ApiErrorBody | string;
+  body: ApiErrorBody;
 
-  constructor(status: number, body?: ApiErrorBody | string) {
+  constructor(status: number, body: ApiErrorBody) {
     super(`API request failed with status ${status}`);
     this.status = status;
     this.body = body;
@@ -92,21 +94,21 @@ export class ApiClient {
         return (await res.text()) as unknown as T;
       } else {
         if (res.status === 401) {
-          router.navigate({ to: "/login" });
+          if (window.location.pathname !== "/login") {
+            router.navigate({ to: "/login" });
+          }
         }
       }
 
-      let parsedBody: ApiErrorBody | string | undefined;
-      try {
-        parsedBody = isJson ? await res.json() : await res.text();
-      } catch {
-        parsedBody = undefined;
-      }
+      const parsedBody: ApiErrorBody = isJson
+        ? await res.json()
+        : await res.text();
+
       throw new ApiError(res.status, parsedBody);
     } catch (err: unknown) {
       clearTimeout(timeout);
       if ((err as Error)?.name === "AbortError") {
-        throw new ApiError(0, "Request aborted or timed out");
+        throw new ApiError(0, { code: "timeout" });
       }
       throw err;
     }
@@ -133,7 +135,6 @@ export class ApiClient {
     opts?: Omit<RequestOptions, "method" | "body">
   ) => this.request<T>(path, { ...(opts || {}), method: "DELETE", body });
 
-  // convenience: update default headers (e.g. auth token)
   setDefaultHeader(key: string, value?: string) {
     if (value == null) delete this.defaultHeaders[key];
     else this.defaultHeaders[key] = value;

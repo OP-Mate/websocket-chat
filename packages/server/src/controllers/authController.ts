@@ -34,10 +34,10 @@ export const register = async (
     const userResult = addUserToDB(username, hashedPassword);
 
     if (!userResult.success) {
-      const status = userResult.error === "Username already exists" ? 409 : 400;
-      return res
-        .status(status)
-        .json({ message: "User creation failed", error: userResult.error });
+      const status = userResult.code === "username_taken" ? 409 : 400;
+      return res.status(status).json({
+        code: userResult.code,
+      });
     }
 
     const token = await generateToken({

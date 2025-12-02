@@ -1,6 +1,6 @@
 import { RawData, WebSocket } from "ws";
 import { wss } from "../index";
-import { ChatEventSchema } from "chat-shared";
+import { ApiCodeError, ChatEventSchema } from "chat-shared";
 import {
   addMessageDB,
   getAllUsersDB,
@@ -43,7 +43,10 @@ export const handleInitialMsg = (socket: AuthWebSocket) => {
 
   const currentUsers = getAllUsersDB(id);
 
-  if (!currentUsers.success) return;
+  if (!currentUsers.success) {
+    sendErrorToUser(id, "failed_to_initialize_websocket");
+    return;
+  }
 
   socket.send(
     JSON.stringify({
@@ -93,7 +96,7 @@ export const handleMessage = (
       const chatRoomPrivate = getIsChatRoomPrivate(result.data.roomId);
 
       if (!chatRoomPrivate.success || !users.success) {
-        sendErrorToUser(senderId, "Invalid chat room", "INVALID_ROOM");
+        sendErrorToUser(senderId, "invalid_room");
         return;
       }
 
@@ -104,7 +107,7 @@ export const handleMessage = (
       );
 
       if (!newMessage.success) {
-        sendErrorToUser(senderId, "Invalid message format", "INVALID_MESSAGE");
+        sendErrorToUser(senderId, "invalid_message");
         return;
       }
 
@@ -145,15 +148,13 @@ export const handleClose = (socket: AuthWebSocket) => {
   console.log(`Client disconnected: ${id}`);
 };
 
-function sendErrorToUser(userId: string, message: string, code: string) {
+function sendErrorToUser(userId: string, code: ApiCodeError) {
   wss.clients.forEach((client: AuthWebSocket) => {
     if (client.user.id === userId && client.readyState === WebSocket.OPEN) {
       client.send(
         JSON.stringify({
           type: "error",
-          error: message,
           code: code,
-          timestamp: Date.now(),
         })
       );
     }

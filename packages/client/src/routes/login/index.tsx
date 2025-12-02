@@ -5,6 +5,7 @@ import { serverResponses } from "../../constants/responses";
 import { router } from "../../router";
 import { api } from "../../api/api";
 import { clearAuthCache } from "../_authenticated";
+import { ApiError } from "../../api/apiClient";
 
 export const Route = createFileRoute("/login/")({
   component: RouteComponent,
@@ -32,7 +33,11 @@ function RouteComponent() {
           setError(serverResponses[response.code]);
         }
       } catch (e) {
-        console.log(e);
+        if (e instanceof ApiError) {
+          setError(serverResponses[e.body.code]);
+        } else {
+          setError("An unexpected error occurred");
+        }
       }
     },
 
@@ -64,7 +69,9 @@ function RouteComponent() {
           setError(serverResponses[response.code]);
         }
       } catch (e) {
-        console.log(e);
+        if (e instanceof ApiError) {
+          setError(serverResponses[e.body.code]);
+        }
       }
     },
     []

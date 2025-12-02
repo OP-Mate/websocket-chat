@@ -1,8 +1,9 @@
+import { DBCodeError } from "chat-shared";
 import { UUIDType } from "src/types";
 
 export type DatabaseResult<T> =
   | { success: true; data: T }
-  | { success: false; error: string; code?: string };
+  | { success: false; code: DBCodeError };
 
 export interface SqliteError extends Error {
   code?: string;

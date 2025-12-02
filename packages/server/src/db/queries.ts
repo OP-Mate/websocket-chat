@@ -24,14 +24,13 @@ export function addUserToDB(
     ) {
       return {
         success: false,
-        error: "Username is already taken",
-        code: "USERNAME_TAKEN",
+        code: "username_taken",
       };
     }
     console.error("Database error adding user:", err);
     return {
       success: false,
-      error: "Failed to create user account",
+      code: "failed_to_create_user",
     };
   }
 }
@@ -47,7 +46,7 @@ export function getAllUsersDB(
     console.error("Database error getting users:", err);
     return {
       success: false,
-      error: "Failed to retrieve users",
+      code: "failed_to_retrieve_users",
     };
   }
 }
@@ -59,20 +58,20 @@ export function addMessageDB(
 ): DatabaseResult<Omit<MessageSchemaType, "type">> {
   try {
     const stmt = db.prepare(
-      "INSERT INTO messages (message, sender_id, chat_room_id) VALUES (?, ?, ?)"
+      "INSERT INTO messages (message, senderId, chat_room_id) VALUES (?, ?, ?)"
     );
     const info = stmt.run(message, senderId, roomId);
 
     const row = db
       .prepare(
-        "SELECT id, message, sender_id, created_at, chat_room_id FROM messages WHERE id = ?"
+        "SELECT id, message, senderId, created_at, chat_room_id FROM messages WHERE id = ?"
       )
       .get(info.lastInsertRowid) as IAddMessageDB;
 
     if (!row) {
       return {
         success: false,
-        error: "Failed to retrieve created message",
+        code: "failed_to_save_message",
       };
     }
 
@@ -90,7 +89,7 @@ export function addMessageDB(
     console.error("Database error adding message:", err);
     return {
       success: false,
-      error: "Failed to save message",
+      code: "failed_to_save_message",
     };
   }
 }
@@ -106,7 +105,7 @@ export function getMessagesByRoomIdDB(
     console.error("Database error getting messages:", err);
     return {
       success: false,
-      error: "Failed to retrieve messages",
+      code: "failed_to_retrieve_messages",
     };
   }
 }
@@ -128,7 +127,7 @@ export function addRoom(
     if (!row) {
       return {
         success: false,
-        error: "Failed to retrieve created room",
+        code: "failed_to_create_room",
       };
     }
 
@@ -137,7 +136,7 @@ export function addRoom(
     console.error("Database error adding room:", err);
     return {
       success: false,
-      error: "Failed to create room",
+      code: "failed_to_create_room",
     };
   }
 }
@@ -153,7 +152,7 @@ export function findUser(username: string): DatabaseResult<User | null> {
     console.error("Database error finding user:", err);
     return {
       success: false,
-      error: "Failed to find user",
+      code: "failed_to_find_user",
     };
   }
 }
@@ -177,14 +176,13 @@ export function addChatRoomUser(
     ) {
       return {
         success: false,
-        error: "User already in this room",
-        code: "USER_ALREADY_IN_ROOM",
+        code: "failed_to_add_user_to_room",
       };
     }
     console.error("Database error adding user to room:", err);
     return {
       success: false,
-      error: "Failed to add user to room",
+      code: "failed_to_add_user_to_room",
     };
   }
 }
@@ -203,7 +201,7 @@ export function getUserIdsByChatRoomId(
     console.error("Database error getting user IDs by chat room:", err);
     return {
       success: false,
-      error: "Failed to retrieve users in room",
+      code: "failed_to_add_user_to_room",
     };
   }
 }
@@ -221,7 +219,7 @@ export function getIsChatRoomPrivate(
     console.error("Database error checking if room is private:", err);
     return {
       success: false,
-      error: "Failed to check room privacy status",
+      code: "Failed to check room privacy status",
     };
   }
 }
@@ -266,7 +264,7 @@ export function findPrivateRoomWithMessages(
     console.error("Database error finding private room:", err);
     return {
       success: false,
-      error: "Failed to find private room",
+      code: "failed_to_find_room",
     };
   }
 }
@@ -282,7 +280,7 @@ export function getAllPublicRooms(): DatabaseResult<RoomSchemaType[]> {
     console.error("Database error getting public rooms:", err);
     return {
       success: false,
-      error: "Failed to retrieve public rooms",
+      code: "Failed to retrieve public rooms",
     };
   }
 }
