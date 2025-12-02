@@ -58,13 +58,13 @@ export function addMessageDB(
 ): DatabaseResult<Omit<MessageSchemaType, "type">> {
   try {
     const stmt = db.prepare(
-      "INSERT INTO messages (message, senderId, chat_room_id) VALUES (?, ?, ?)"
+      "INSERT INTO messages (message, sender_id, chat_room_id) VALUES (?, ?, ?)"
     );
     const info = stmt.run(message, senderId, roomId);
 
     const row = db
       .prepare(
-        "SELECT id, message, senderId, created_at, chat_room_id FROM messages WHERE id = ?"
+        "SELECT id, message, sender_id, created_at, chat_room_id FROM messages WHERE id = ?"
       )
       .get(info.lastInsertRowid) as IAddMessageDB;
 
