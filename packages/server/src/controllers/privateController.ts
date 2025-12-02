@@ -22,9 +22,7 @@ export const joinPrivateRoom = (
   const foundRoomsMessages = findPrivateRoomWithMessages(senderId, receiveId);
 
   if (!foundRoomsMessages.success) {
-    res
-      .status(500)
-      .json({ code: "database_error", error: foundRoomsMessages.error });
+    res.status(500).json({ code: "database_error" });
     return;
   }
 
@@ -32,9 +30,7 @@ export const joinPrivateRoom = (
     const newRoom = addRoom(null, 1);
 
     if (!newRoom.success) {
-      return res
-        .status(500)
-        .json({ code: "database_error", error: newRoom.error });
+      return res.status(500).json({ code: "database_error" });
     }
 
     const senderUser = addChatRoomUser(newRoom.data.id, senderId);
@@ -43,11 +39,6 @@ export const joinPrivateRoom = (
     if (!senderUser.success || !receiveUser.success) {
       return res.status(500).json({
         code: "database_error",
-        error: !senderUser.success
-          ? senderUser.error
-          : !receiveUser.success
-            ? receiveUser.error
-            : "Unknown error",
       });
     }
 

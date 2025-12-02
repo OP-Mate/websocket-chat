@@ -1,7 +1,13 @@
 import { db } from "./index";
 import { MessageSchemaType, RoomSchemaType } from "chat-shared";
 import { randomUUID } from "crypto";
-import { DatabaseResult, IAddMessageDB, SqliteError, User } from "./types";
+import {
+  DatabaseResult,
+  IAddMessageDB,
+  IMessage,
+  SqliteError,
+  User,
+} from "./types";
 
 export function addUserToDB(
   username: string,
@@ -219,7 +225,7 @@ export function getIsChatRoomPrivate(
     console.error("Database error checking if room is private:", err);
     return {
       success: false,
-      code: "Failed to check room privacy status",
+      code: "failed_to_check_room_privacy_status",
     };
   }
 }
@@ -254,11 +260,21 @@ export function findPrivateRoomWithMessages(
       .prepare(
         "SELECT id, message, sender_id, created_at, chat_room_id as roomId FROM messages WHERE chat_room_id = ?"
       )
-      .all(row.id) as Omit<MessageSchemaType, "type">[];
+      .all(row.id) as IMessage[];
 
     return {
       success: true,
-      data: { id: row.id, messages },
+      data: {
+        id: row.id,
+        messages: messages.map((msg) => ({
+          id: msg.id,
+          message: msg.message,
+          type: "message",
+          roomId: msg.room_id,
+          createdAt: msg.created_at,
+          senderId: msg.sender_id,
+        })),
+      },
     };
   } catch (err: unknown) {
     console.error("Database error finding private room:", err);
@@ -280,7 +296,7 @@ export function getAllPublicRooms(): DatabaseResult<RoomSchemaType[]> {
     console.error("Database error getting public rooms:", err);
     return {
       success: false,
-      code: "Failed to retrieve public rooms",
+      code: "failed_to_retrieve_public_rooms",
     };
   }
 }

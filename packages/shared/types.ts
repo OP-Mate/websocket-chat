@@ -14,7 +14,9 @@ export type DBCodeError =
   | "failed_to_find_user"
   | "failed_to_add_user_to_room"
   | "failed_to_find_room"
-  | "failed_to_initialize_websocket";
+  | "failed_to_initialize_websocket"
+  | "failed_to_check_room_privacy_status"
+  | "failed_to_retrieve_public_rooms";
 
 export type WSCodeError = "invalid_room" | "invalid_message";
 

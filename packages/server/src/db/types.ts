@@ -23,3 +23,12 @@ export interface User {
   username: string;
   id: UUIDType;
 }
+
+export interface IMessage {
+  id: number;
+  type: "message";
+  message: string;
+  created_at: number;
+  sender_id: string;
+  room_id: number;
+}
